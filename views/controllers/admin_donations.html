@@ -1,0 +1,50 @@
+
+<div class="clearfix">
+    <div class="ow_right">{decorator name='button' langLabel='ocsfundraising+view_goals' id='view_goals_btn'}</div>
+</div>
+
+<div class="ow_wide">
+<table class="ow_table_3">
+    <tr>
+        <td class="ow_label">{text key='ocsfundraising+name'}</td><td class="ow_value">{$goal.dto->name}</td>
+    </tr>
+    <tr>
+        <td class="ow_label">{text key='ocsfundraising+current_amount'}</td><td class="ow_value">{$currency} {$goal.dto->amountCurrent}</td>
+    </tr>
+    <tr>
+        <td class="ow_label">{text key='ocsfundraising+amount_raised'}</td><td class="ow_value">{$currency} {$sum}</td>
+    </tr>
+</table>
+</div>
+
+{if $donations}
+{$paging}
+
+<table class="ow_table_2">
+<tr>
+    <th>{text key='admin+user'}</th>
+    <th>{text key='ocsfundraising+amount'}, {$currency}</th>
+    <th>{text key='base+time'}</th>
+</tr>
+{foreach from=$donations item='d'}
+<tr class="ow_alt{cycle values='1,2'}">
+<td width="50%">
+<div class="clearfix">
+<div class="ow_left ow_txtleft" style="width: 55px">
+    {if $d.dto->userId}
+        {user_avatar userId=$d.dto->userId}
+    {else}
+        <img src="{$defaultAvatar}" title="{$d.username}" />
+    {/if}
+</div>
+<div class="ow_left ow_txtleft">{if $d.dto->userId}<a href="{url_for_route for="base_user_profile:[username=>`$d.username`]"}">{$d.username}</a>{else}{$d.username}{/if}</div>
+</div>
+</td>
+<td>{$d.dto->amount}</td>
+<td>{$d.dto->donationStamp}</td>
+</tr>
+{/foreach}
+</table>
+
+{$paging}
+{/if}

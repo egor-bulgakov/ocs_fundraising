@@ -1,0 +1,76 @@
+
+<div class="clearfix">
+    <div class="ow_right ow_stdmargin"><a href="http://oxcandystore.com/?pk=ocsfundraising"><img src="{$logo}" /></a></div>
+</div>
+
+{block_decorator name='box' type='empty'}
+
+{if $list}
+<form method="post">
+<table class="ow_table_2">
+    <tr>
+        <th>{text key='ocsfundraising+name'}, {text key='ocsfundraising+description'}</th>
+        <th>{text key='ocsfundraising+target_amount'}, {$currency}</th>
+        <th>{text key='ocsfundraising+current_amount'}, {$currency}</th>
+        <th>%</th>
+        <th>{text key='ocsfundraising+end_date'}</th>
+        <th>{text key='ocsfundraising+status'}</th>
+        <td></td>
+    </tr>
+    {foreach from=$list item='goal'}
+    {capture assign='goalId'}{$goal->id}{/capture}
+    <tr class="ow_alt{cycle values='1,2'}">
+        <td class="ow_txtleft">
+            <b>{$goal->name}</b><p class="ow_small">{$goal->description}</p>
+            {if $donations[$goalId]}<a class="ow_small" href="{url_for_route for="ocsfundraising.admin_donations:[goalId=>`$goal->id`]"}">{text key='ocsfundraising+view_donations'} ({$donations[$goalId]})</a>{/if}
+        </td>
+        <td>{$goal->amountTarget}</td>
+        <td>{$goal->amountCurrent}</td>
+        <td>{math equation="round(x/y*100)" x=$goal->amountCurrent y=$goal->amountTarget}</td>
+        <td class="ow_small">{$goal->endStamp}</td>
+        <td>
+            <span style="padding: 0 2px 2px" class="ow_small ow_mild_{if $goal->status=='active'}green{else}red{/if}">{text key="ocsfundraising+status_`$goal->status`"}</span>
+        </td>
+        <td>
+            <a class="ow_lbutton ocs_goal_edit" rel="{$goal->id}" href="javascript://">{text key='base+edit'}</a><br /><br />
+            <a class="ow_lbutton ow_red ocs_goal_delete" rel="{$goal->id}" href="javascript://">{text key='admin+delete'}</a>
+        </td>
+    </tr>
+    {/foreach}
+</table>
+</form>
+{else}
+    <div class="ow_nocontent">{text key='ocsfundraising+no_goals'}</div>
+{/if}
+{/block_decorator}
+
+<div class="ow_automargin ow_superwide">
+{block_decorator name='box_cap' langLabel='ocsfundraising+add_goal' iconClass='ow_ic_add'}{/block_decorator}
+{block_decorator name='box'}
+{form name='form-add-goal'}
+<table class="ow_table_1 ow_form">
+    <tr>
+        <td class="ow_label">{label name='name'}</td>
+        <td class="ow_value">{input name='name'}<br/>{error name='name'}</td>
+    </tr>
+	<tr>
+	    <td class="ow_label">{label name='description'}</td>
+	    <td class="ow_value">{input name='description'}</td>
+	</tr>
+	<tr>
+	    <td class="ow_label">{label name='target'}</td>
+	    <td class="ow_value"><b>{$currency}</b> {input name='target' style='width: 88%'}<br/>{error name='target'}</td>
+	</tr>
+	<tr>
+        <td class="ow_label">{label name='min'}</td>
+        <td class="ow_value"><b>{$currency}</b> {input name='min' style='width: 88%'}</td>
+    </tr>
+	<tr>
+	    <td class="ow_label">{label name='end'}</td>
+	    <td class="ow_value">{input name='end'}</td>
+    </tr>
+</table>
+<div class="ow_center">{submit name='add'}</div>
+{/form}
+{/block_decorator}
+</div>

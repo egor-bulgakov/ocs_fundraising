@@ -1,0 +1,90 @@
+{style}{literal}
+
+.ocs_fundraising_goal_name {
+    font-size: 14px;
+    text-align: center;
+    font-weight: bold;
+    padding-bottom: 10px;
+}
+
+.ocs_fundraising_bar,
+.ocs_fundraising_progress {
+    height: 11px;    
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+}
+.ocs_fundraising_bar {
+    background: #cfcfcf;
+    padding: 2px;
+    position: relative;
+    margin-bottom: 10px;
+    border: 1px solid #969696;
+}
+
+.ocs_fundraising_amount { font-weight: bold; font-size: 11px; }
+.ocs_fundraising_current { height: 40px; position: relative; }
+.ocs_fundraising_current .ow_tip_box { font-weight: bold; font-size: 10px;}
+.ocs_fundraising_progress { background: #6195c2; border: 1px solid #005ab1; text-align: right; position: absolute; height: 9px; }
+.ocs_fundraising_target { position: absolute; right: 5px; color: #333; }
+.ow_sidebar .ocs_fundraising .ow_column { width: 100% }
+    
+{/literal}{/style}
+
+<div class="ocs_fundraising">
+{if isset($error)}
+    <div class="ow_nocontent">{$error}</div>
+{elseif $goal}
+    <div class="ocs_fundraising_goal_name">{$goal.dto->name}</div>
+	{if $goal.dto->amountCurrent}
+	<div class="ocs_fundraising_current" style="width: {$goal.percent}%">
+	   <div class="ow_tip_top" style="right: -23px; font-size: 10px;"><div class="ow_tip_arrow"><span/></div><div class="ow_tip_box"><span class="ow_tip_title">{$currency}{$goal.dto->amountCurrent}</span></div></div>
+	</div>
+	{/if}
+	<div class="ocs_fundraising_bar">
+	    {if $goal.dto->amountCurrent}
+	    <div class="ocs_fundraising_progress ocs_fundraising_amount" style="width: {$goal.percent}%">
+	    </div>
+	    {/if}
+	</div>
+	
+	<div class="ow_smallmargin ow_small ow_remark">
+        {text key='ocsfundraising+res_amount_raised_of' amount=$goal.dto->amountCurrent target=$goal.dto->amountTarget currency=$currency}
+        {if $donators}<br /><b>{$donators}</b> {text key='ocsfundraising+contributors'}{/if}
+        {if $goal.dto->endStamp}<br />{text key='ocsfundraising+end_date'}: <b>{$goal.dto->endStamp|simple_date:true}</b>{/if}
+    </div>
+    
+    {if $goal.dto->description != ''}<div class="ow_smallmargin">{$goal.dto->description}</div>{/if}
+	
+	<div class="ow_smallmargin ow_txtright">{decorator name='button' langLabel='ocsfundraising+donate' class="btn-donate-goal-`$goal.dto->id`"}</div>
+	
+	<div class="clearfix">
+	{if $showTop && $top}
+	<div class="ow_column ow_left">
+	<div class="ow_smallmargin"><b>{text key='ocsfundraising+top_donations'}</b></div>
+	{foreach from=$top item='d'}
+	    {capture assign='infoString'}
+            {if $d.dto->userId}<a href="{url_for_route for="base_user_profile:[username=>`$d.username`]"}">{$d.username}</a>{else}{$d.username}{/if} <span class="ow_tiny">{$d.dto->donationStamp}</span>
+	    {/capture}
+	    {capture assign='content'}<span class="ow_remark ow_small">{text key='ocsfundraising+amount'}: <b>{$currency}{$d.dto->amount}</b></span>{/capture}
+	    <div class="ow_smallmargin">{decorator name='ipc' infoString=$infoString content=$content imageSrc=$d.avatar imageTitle=$d.username}</div>
+	{/foreach}    
+	</div>
+	{/if}
+	
+	{if $showLatest && $latest}
+	<div class="ow_column ow_left">
+	<div class="ow_smallmargin"><b>{text key='ocsfundraising+latest_donations'}</b></div>
+	{foreach from=$latest item='d'}
+        {capture assign='infoString'}
+            {if $d.dto->userId}<a href="{url_for_route for="base_user_profile:[username=>`$d.username`]"}">{$d.username}</a>{else}{$d.username}{/if} <span class="ow_tiny">{$d.dto->donationStamp}</span>
+        {/capture}
+        {capture assign='content'}<span class="ow_remark ow_small">{text key='ocsfundraising+amount'}: <b>{$currency}{$d.dto->amount}</b></span>{/capture}
+        <div class="ow_smallmargin">{decorator name='ipc' infoString=$infoString content=$content imageSrc=$d.avatar imageTitle=$d.username}</div>
+    {/foreach}
+	</div>
+	{/if}
+	</div>
+{else}
+    <div class="ow_nocontent">{text key='ocsfundraising+not_assigned'}</div>
+{/if}
+</div>

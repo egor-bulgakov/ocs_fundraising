@@ -1,0 +1,23 @@
+
+<div class="ow_wide ow_automargin">
+{block_decorator name='box_cap' langLabel='ocsfundraising+donate_label' iconClass='ow_ic_ok'}{/block_decorator}
+
+{block_decorator name='box'}
+    {form name='donate-form'}
+    <div class="ow_small ow_smallmargin">{$goal.dto->description}</div>
+    {if !$userId}
+    <div class="ow_smallmargin ow_center">
+        {text key='ocsfundraising+your_name'}: {input name='username' style='width: 140px'}
+    </div>
+    {/if}
+    <div class="ow_smallmargin ow_center">
+        {text key='ocsfundraising+amount'}:
+        <b>{$currency}</b> {input name='amount' style='width: 100px'}
+    </div>
+    <div class="ow_center">
+        <div class="ow_smallmargin">{input name='gateway'}</div>
+        {submit name='donate'}
+    </div>
+    {/form}
+{/block_decorator}
+</div>
