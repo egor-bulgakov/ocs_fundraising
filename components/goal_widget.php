@@ -38,20 +38,47 @@ class OCSFUNDRAISING_CMP_GoalWidget extends BASE_CLASS_Widget
         	$this->assign('goal', null);
         	return;
         }
-        
+
+        $userIdList = array();
+
         $showTop = $params->customParamList['show_top'];
         if ( $showTop )
         {
-        	$this->assign('top', $service->getDonationList($goalId, 'top', 1, 3));
+            $top = $service->getDonationList($goalId, 'top', 1, 3);
+            if ( $top )
+            {
+                foreach ( $top as $d )
+                {
+                    if ( $d['dto']->userId && !in_array($d['dto']->userId, $userIdList) )
+                    {
+                        array_push($userIdList, $d['dto']->userId);
+                    }
+                }
+            }
+        	$this->assign('top', $top);
         }
         $this->assign('showTop', $showTop);
         
         $showLatest = $params->customParamList['show_latest'];
         if ( $showLatest )
         {
-        	$this->assign('latest', $service->getDonationList($goalId, 'latest', 1, 3));
+            $latest = $service->getDonationList($goalId, 'latest', 1, 3);
+            if ( $latest )
+            {
+                foreach ( $latest as $d )
+                {
+                    if ( $d['dto']->userId && !in_array($d['dto']->userId, $userIdList) )
+                    {
+                        array_push($userIdList, $d['dto']->userId);
+                    }
+                }
+            }
+        	$this->assign('latest', $latest);
         }
         $this->assign('showLatest', $showLatest);
+
+        $avatars = BOL_AvatarService::getInstance()->getDataForUserAvatars($userIdList);
+        $this->assign('avatars', $avatars);
         
         $this->assign('currency', BOL_BillingService::getInstance()->getActiveCurrency());
         

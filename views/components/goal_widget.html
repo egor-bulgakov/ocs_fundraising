@@ -12,6 +12,7 @@
     height: 11px;    
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
+    border-radius: 8px;
 }
 .ocs_fundraising_bar {
     background: #cfcfcf;
@@ -63,10 +64,10 @@
 	<div class="ow_smallmargin"><b>{text key='ocsfundraising+top_donations'}</b></div>
 	{foreach from=$top item='d'}
 	    {capture assign='infoString'}
-            {if $d.dto->userId}<a href="{url_for_route for="base_user_profile:[username=>`$d.username`]"}">{$d.username}</a>{else}{$d.username}{/if} <span class="ow_tiny">{$d.dto->donationStamp}</span>
+            {if $d.dto->userId}<a href="{url_for_route for="base_user_profile:[username=>`$d.username`]"}">{$d.displayName}</a>{else}{$d.displayName}{/if} <span class="ow_tiny">{$d.dto->donationStamp}</span>
 	    {/capture}
 	    {capture assign='content'}<span class="ow_remark ow_small">{text key='ocsfundraising+amount'}: <b>{$currency}{$d.dto->amount}</b></span>{/capture}
-	    <div class="ow_smallmargin">{decorator name='ipc' infoString=$infoString content=$content imageSrc=$d.avatar imageTitle=$d.username}</div>
+	    <div class="ow_smallmargin">{decorator name='ipc' infoString=$infoString content=$content avatar=$d.avatar}</div>
 	{/foreach}    
 	</div>
 	{/if}
@@ -76,10 +77,10 @@
 	<div class="ow_smallmargin"><b>{text key='ocsfundraising+latest_donations'}</b></div>
 	{foreach from=$latest item='d'}
         {capture assign='infoString'}
-            {if $d.dto->userId}<a href="{url_for_route for="base_user_profile:[username=>`$d.username`]"}">{$d.username}</a>{else}{$d.username}{/if} <span class="ow_tiny">{$d.dto->donationStamp}</span>
+            {if $d.dto->userId}<a href="{url_for_route for="base_user_profile:[username=>`$d.username`]"}">{$d.displayName}</a>{else}{$d.displayName}{/if} <span class="ow_tiny">{$d.dto->donationStamp}</span>
         {/capture}
         {capture assign='content'}<span class="ow_remark ow_small">{text key='ocsfundraising+amount'}: <b>{$currency}{$d.dto->amount}</b></span>{/capture}
-        <div class="ow_smallmargin">{decorator name='ipc' infoString=$infoString content=$content imageSrc=$d.avatar imageTitle=$d.username}</div>
+        <div class="ow_smallmargin">{decorator name='ipc' infoString=$infoString content=$content avatar=$d.avatar}</div>
     {/foreach}
 	</div>
 	{/if}

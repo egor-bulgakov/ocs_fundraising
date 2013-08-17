@@ -54,8 +54,8 @@ class OCSFUNDRAISING_CLASS_DonationProductAdapter implements OW_BillingProductAd
         
         $service->registerDonation($donation);
         
-        $goal->amountCurrent += $donation->amount;
-        $service->update($goal);
+        $goal['dto']->amountCurrent += $donation->amount;
+        $service->update($goal['dto']);
         
         return true;
     }

@@ -1,4 +1,3 @@
-
 <div class="clearfix">
     <div class="ow_right">{decorator name='button' langLabel='ocsfundraising+view_goals' id='view_goals_btn'}</div>
 </div>
@@ -31,13 +30,9 @@
 <td width="50%">
 <div class="clearfix">
 <div class="ow_left ow_txtleft" style="width: 55px">
-    {if $d.dto->userId}
-        {user_avatar userId=$d.dto->userId}
-    {else}
-        <img src="{$defaultAvatar}" title="{$d.username}" />
-    {/if}
+    {decorator name=avatar_item data=$d.avatar}
 </div>
-<div class="ow_left ow_txtleft">{if $d.dto->userId}<a href="{url_for_route for="base_user_profile:[username=>`$d.username`]"}">{$d.username}</a>{else}{$d.username}{/if}</div>
+<div class="ow_left ow_txtleft">{if $d.dto->userId}<a href="{url_for_route for="base_user_profile:[username=>`$d.username`]"}">{$d.displayName}</a>{else}{$d.displayName}{/if}</div>
 </div>
 </td>
 <td>{$d.dto->amount}</td>

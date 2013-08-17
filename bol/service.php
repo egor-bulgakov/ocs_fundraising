@@ -141,8 +141,20 @@ final class OCSFUNDRAISING_BOL_Service
         
         $avatarService = BOL_AvatarService::getInstance();
         $userService = BOL_UserService::getInstance();
-        $avatar = $avatarService->getDefaultAvatarUrl();
-        
+        $defAvatar = array('src' => $avatarService->getDefaultAvatarUrl());
+
+        $userIdList = array();
+        foreach ( $list as $donation )
+        {
+            if ( $donation->userId && !in_array($donation->userId, $userIdList) )
+            {
+                array_push($userIdList, $donation->userId);
+            }
+        }
+        $avatars = $avatarService->getDataForUserAvatars($userIdList);
+        $displayNames = $userService->getDisplayNamesForList($userIdList);
+        $userNames = $userService->getUserNamesForList($userIdList);
+
         $res = array();
         foreach ( $list as $donation )
         {
@@ -151,14 +163,15 @@ final class OCSFUNDRAISING_BOL_Service
             $res[$donation->id]['dto'] = $donation;
             if ( $donation->userId )
             {
-                $userAvatar = $avatarService->getAvatarUrl($donation->userId);
-                $res[$donation->id]['avatar'] = $userAvatar ? $userAvatar : $avatar;
-                $res[$donation->id]['username'] = $userService->getUserName($donation->userId);
+                $res[$donation->id]['avatar'] = !empty($avatars[$donation->userId]) ? $avatars[$donation->userId] : $defAvatar;
+                $res[$donation->id]['username'] = !empty($userNames[$donation->userId]) ? $userNames[$donation->userId] : $userService->getUserName($donation->userId);
+                $res[$donation->id]['displayName'] = !empty($displayNames[$donation->userId]) ? $displayNames[$donation->userId] : $userService->getDisplayName($donation->userId);
             }
             else 
             {
-                $res[$donation->id]['avatar'] = $avatar;
+                $res[$donation->id]['avatar'] = $defAvatar;
                 $res[$donation->id]['username'] = $donation->username;
+                $res[$donation->id]['displayName'] = $donation->username;
             }
         }
         

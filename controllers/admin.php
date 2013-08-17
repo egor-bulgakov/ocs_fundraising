@@ -40,7 +40,7 @@ class OCSFUNDRAISING_CTRL_Admin extends ADMIN_CTRL_Abstract
         
         foreach ( $list as &$g )
         {
-        	$g->endStamp = $g->endStamp ? UTIL_DateTime::formatSimpleDate($g->endStamp) : '-';
+        	$g->endStamp = $g->endStamp ? UTIL_DateTime::formatDate($g->endStamp) : '-';
         	$g->amountTarget = floatval($g->amountTarget);
         	$g->amountCurrent = floatval($g->amountCurrent);
         	$donations[$g->id] = $service->countGoalDonations($g->id);
@@ -59,9 +59,10 @@ class OCSFUNDRAISING_CTRL_Admin extends ADMIN_CTRL_Abstract
         	$goal->amountTarget = floatval($values['target']);
         	$goal->amountCurrent = 0.0;
         	$goal->startStamp = time();
-        	if ( !empty($values['end']['month']) && !empty($values['end']['day']) && !empty($values['end']['year']) )
+        	$date = explode('/', $values['end']);
+        	if ( !empty($date[1]) && !empty($date[2]) && !empty($date[0]) )
         	{
-        	   $goal->endStamp = mktime(0, 0, 0, $values['end']['month'], $values['end']['day'], $values['end']['year']);
+        	   $goal->endStamp = mktime(0, 0, 0, $date[1], $date[2], $date[0]);
         	}
         	$goal->status = 'active';
         	
