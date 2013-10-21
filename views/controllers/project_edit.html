@@ -1,0 +1,33 @@
+{form name='goal-edit-form'}
+<table class="ow_table_1 ow_form">
+    <tr>
+        <td class="ow_label">{label name='name'}</td>
+        <td class="ow_value">{input name='name'}</td>
+    </tr>
+    <tr>
+        <td class="ow_label">{label name='description'}</td>
+        <td class="ow_value">{input name='description'}</td>
+    </tr>
+    <tr>
+        <td class="ow_label">{label name='category'}</td>
+        <td class="ow_value">{input name='category'}</td>
+    </tr>
+    <tr>
+        <td class="ow_label">{label name='image'}</td>
+        <td class="ow_value">{if $image}<img class="ow_smallmargin" src="{$image}" /><br />{/if}{input name='image'}</td>
+    </tr>
+    <tr>
+        <td class="ow_label ow_nowrap">{label name='target'}</td>
+        <td class="ow_value">{input name='target'}</td>
+    </tr>
+    <tr>
+        <td class="ow_label ow_nowrap">{label name='min'}</td>
+        <td class="ow_value">{input name='min'}</td>
+    </tr>
+    <tr>
+        <td class="ow_label">{label name='end'}</td>
+        <td class="ow_value">{input name='end'}</td>
+    </tr>
+</table>
+<div class="ow_center">{submit name='edit'}</div>
+{/form}

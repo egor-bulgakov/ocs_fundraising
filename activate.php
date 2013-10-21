@@ -20,3 +20,9 @@ BOL_BillingService::getInstance()->activateProduct('ocsfundraising_donation');
 
 $widget = BOL_ComponentAdminService::getInstance()->addWidget('OCSFUNDRAISING_CMP_GoalWidget', true);
 $placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentAdminService::PLACE_INDEX);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget('OCSFUNDRAISING_CMP_UserProjectsWidget');
+$placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentAdminService::PLACE_PROFILE);
+BOL_ComponentAdminService::getInstance()->addWidgetToPosition($placeWidget, BOL_ComponentAdminService::SECTION_LEFT);
+
+OW::getNavigation()->addMenuItem(OW_Navigation::MAIN, 'ocsfundraising.list', 'ocsfundraising', 'projects', OW_Navigation::VISIBLE_FOR_ALL);

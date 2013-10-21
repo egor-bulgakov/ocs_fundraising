@@ -1,0 +1,38 @@
+<div class="ow_automargin ow_superwide">
+    {block_decorator name='box_cap' langLabel='ocsfundraising+add_goal' iconClass='ow_ic_add'}{/block_decorator}
+    {block_decorator name='box'}
+    {form name='goal-add-form'}
+    <table class="ow_table_1 ow_form">
+        <tr>
+            <td class="ow_label">{label name='name'}</td>
+            <td class="ow_value">{input name='name'}<br/>{error name='name'}</td>
+        </tr>
+        <tr>
+            <td class="ow_label">{label name='description'}</td>
+            <td class="ow_value">{input name='description'}{error name='description'}</td>
+        </tr>
+        <tr>
+            <td class="ow_label">{label name='category'}</td>
+            <td class="ow_value">{input name='category'}</td>
+        </tr>
+        <tr>
+            <td class="ow_label">{label name='image'}</td>
+            <td class="ow_value">{input name='image'}</td>
+        </tr>
+        <tr>
+            <td class="ow_label">{label name='target'}</td>
+            <td class="ow_value"><b>{$currency}</b> {input name='target' style='width: 88%'}<br/>{error name='target'}</td>
+        </tr>
+        <tr>
+            <td class="ow_label">{label name='min'}</td>
+            <td class="ow_value"><b>{$currency}</b> {input name='min' style='width: 88%'}</td>
+        </tr>
+        <tr>
+            <td class="ow_label">{label name='end'}</td>
+            <td class="ow_value">{input name='end'}</td>
+        </tr>
+    </table>
+    <div class="ow_center">{submit name='add'}</div>
+    {/form}
+    {/block_decorator}
+</div>

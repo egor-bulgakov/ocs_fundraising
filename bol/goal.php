@@ -20,6 +20,18 @@ class OCSFUNDRAISING_BOL_Goal extends OW_Entity
     /**
      * @var string
      */
+    public $ownerType = 'admin';
+    /**
+     * @var int
+     */
+    public $ownerId = null;
+    /**
+     * @var int
+     */
+    public $categoryId = null;
+    /**
+     * @var string
+     */
     public $name;
     /**
      * @var string
@@ -49,4 +61,8 @@ class OCSFUNDRAISING_BOL_Goal extends OW_Entity
      * @var string
      */
     public $status;
+    /**
+     * @var string
+     */
+    public $image = null;
 }

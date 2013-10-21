@@ -3,6 +3,8 @@
     <div class="ow_right ow_stdmargin"><a href="http://oxcandystore.com/?pk=ocsfundraising"><img src="{$logo}" /></a></div>
 </div>
 
+{$menu}
+
 {block_decorator name='box' type='empty'}
 
 {if $list}
@@ -32,8 +34,8 @@
             <span style="padding: 0 2px 2px" class="ow_small ow_mild_{if $goal->status=='active'}green{else}red{/if}">{text key="ocsfundraising+status_`$goal->status`"}</span>
         </td>
         <td>
-            <a class="ow_lbutton ocs_goal_edit" rel="{$goal->id}" href="javascript://">{text key='base+edit'}</a><br /><br />
-            <a class="ow_lbutton ow_red ocs_goal_delete" rel="{$goal->id}" href="javascript://">{text key='admin+delete'}</a>
+            <a class="ow_lbutton ocs_goal_edit" data-gid="{$goal->id}" href="javascript://">{text key='base+edit'}</a><br /><br />
+            <a class="ow_lbutton ow_red ocs_goal_delete" data-gid="{$goal->id}" href="javascript://">{text key='admin+delete'}</a>
         </td>
     </tr>
     {/foreach}
@@ -55,15 +57,23 @@
     </tr>
 	<tr>
 	    <td class="ow_label">{label name='description'}</td>
-	    <td class="ow_value">{input name='description'}</td>
+	    <td class="ow_value">{input name='description'}{error name='description'}</td>
 	</tr>
+    <tr>
+        <td class="ow_label">{label name='category'}</td>
+        <td class="ow_value">{input name='category'} {error name='category'}</td>
+    </tr>
+    <tr>
+        <td class="ow_label">{label name='image'}</td>
+        <td class="ow_value">{input name='image'}</td>
+    </tr>
 	<tr>
 	    <td class="ow_label">{label name='target'}</td>
-	    <td class="ow_value"><b>{$currency}</b> {input name='target' style='width: 88%'}<br/>{error name='target'}</td>
+	    <td class="ow_value"><b>{$currency}</b> {input name='target' class='ow_settings_input'}<br/>{error name='target'}</td>
 	</tr>
 	<tr>
         <td class="ow_label">{label name='min'}</td>
-        <td class="ow_value"><b>{$currency}</b> {input name='min' style='width: 88%'}</td>
+        <td class="ow_value"><b>{$currency}</b> {input name='min' class='ow_settings_input'}</td>
     </tr>
 	<tr>
 	    <td class="ow_label">{label name='end'}</td>

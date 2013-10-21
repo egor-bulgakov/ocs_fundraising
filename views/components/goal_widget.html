@@ -16,7 +16,6 @@
 }
 .ocs_fundraising_bar {
     background: #cfcfcf;
-    padding: 2px;
     position: relative;
     margin-bottom: 10px;
     border: 1px solid #969696;
@@ -35,19 +34,23 @@
 {if isset($error)}
     <div class="ow_nocontent">{$error}</div>
 {elseif $goal}
-    <div class="ocs_fundraising_goal_name">{$goal.dto->name}</div>
+    <div class="ocs_fundraising_goal_name"><a href="{url_for_route for="ocsfundraising.project:[id=>`$goal.dto->id`]"}">{$goal.dto->name}</a></div>
+    {if $image}
+        <div class="ow_stdmargin ow_center"><img src="{$image}" style="max-width: 100%;" /></div>
+    {/if}
+    <div style="padding: 0px 20px;">
 	{if $goal.dto->amountCurrent}
-	<div class="ocs_fundraising_current" style="width: {$goal.percent}%">
+	<div class="ocs_fundraising_current" style="width: {if $goal.percent gt 100}100{else}{$goal.percent}{/if}%">
 	   <div class="ow_tip_top" style="right: -23px; font-size: 10px;"><div class="ow_tip_arrow"><span/></div><div class="ow_tip_box"><span class="ow_tip_title">{$currency}{$goal.dto->amountCurrent}</span></div></div>
 	</div>
 	{/if}
 	<div class="ocs_fundraising_bar">
 	    {if $goal.dto->amountCurrent}
-	    <div class="ocs_fundraising_progress ocs_fundraising_amount" style="width: {$goal.percent}%">
+	    <div class="ocs_fundraising_progress ocs_fundraising_amount" style="width: {if $goal.percent gt 100}100{else}{$goal.percent}{/if}%">
 	    </div>
 	    {/if}
 	</div>
-	
+    </div>
 	<div class="ow_smallmargin ow_small ow_remark">
         {text key='ocsfundraising+res_amount_raised_of' amount=$goal.dto->amountCurrent target=$goal.dto->amountTarget currency=$currency}
         {if $donators}<br /><b>{$donators}</b> {text key='ocsfundraising+contributors'}{/if}
@@ -55,9 +58,11 @@
     </div>
     
     {if $goal.dto->description != ''}<div class="ow_smallmargin">{$goal.dto->description}</div>{/if}
-	
-	<div class="ow_smallmargin ow_txtright">{decorator name='button' langLabel='ocsfundraising+donate' class="btn-donate-goal-`$goal.dto->id`"}</div>
-	
+
+    <div class="ow_stdmargin ow_txtcenter">
+        {decorator name='button' langLabel='ocsfundraising+details' class="btn-details-goal-`$goal.dto->id`"}
+	    {decorator name='button' langLabel='ocsfundraising+donate' class="btn-donate-goal-`$goal.dto->id`"}
+    </div>
 	<div class="clearfix">
 	{if $showTop && $top}
 	<div class="ow_column ow_left">

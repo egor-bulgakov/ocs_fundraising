@@ -1,0 +1,67 @@
+{if $isOwner}
+<div class="ow_stdmargin ow_txtright">
+    {decorator name='button_list_item' langLabel='ocsfundraising+edit' id='btn-edit-project'}
+    {decorator name='button_list_item' langLabel='ocsfundraising+delete' id='btn-delete-project' class='ow_mild_red'}
+</div>
+{/if}
+<div class="clearfix">
+
+<div class="ow_left ow_supernarrow">
+    {block_decorator name='box' addClass='ow_std_margin' iconClass='ow_ic_info' langLabel='ocsfundraising+details'}
+    <table class="ow_table_3">
+        {if $project.dto->ownerId}
+        <tr class="ow_tr_first">
+            <td class="ow_label" style="width: 35%">{text key='ocsfundraising+creator'}</td>
+            <td class="ow_value">
+                {decorator name='avatar_item' data=$avatar}<br />
+                <a href="{$ownerUrl}">{$avatar.title}</a>
+            </td>
+        </tr>
+        {/if}
+        {if $project.dto->categoryId}
+        <tr>
+            <td class="ow_label">{text key='ocsfundraising+category'}</td>
+            <td class="ow_value"><a href="{$categoryUrl}">{text key="ocsfundraising+category_`$project.dto->categoryId`"}</a></td>
+        </tr>
+        {/if}
+        <tr>
+            <td class="ow_label">{text key='ocsfundraising+target_amount'}</td>
+            <td class="ow_value">{$project.dto->amountTarget}</td>
+        </tr>
+        <tr>
+            <td class="ow_label">{text key='ocsfundraising+current_amount'}</td>
+            <td class="ow_value">{$project.dto->amountCurrent}</td>
+        </tr>
+        {if $project.dto->endStamp}
+        <tr>
+            <td class="ow_label">{text key='ocsfundraising+end_date'}</td>
+            <td class="ow_value">{format_date timestamp=$project.dto->endStamp}</td>
+        </tr>
+        {/if}
+    </table>
+    <div class="ow_center">{decorator name='button' langLabel='ocsfundraising+donate' id="btn-donate"}</div>
+    {/block_decorator}
+
+    {if $latest}
+    {block_decorator name='box' addClass='ow_std_margin' iconClass='ow_ic_user' langLabel='ocsfundraising+latest_donations'}
+        {foreach from=$latest item='d'}
+        {capture assign='infoString'}
+        {if $d.dto->userId}<a href="{url_for_route for="base_user_profile:[username=>`$d.username`]"}">{$d.displayName}</a>{else}{$d.displayName}{/if} <span class="ow_tiny">{$d.dto->donationStamp}</span>
+        {/capture}
+        {capture assign='content'}<span class="ow_remark ow_small">{text key='ocsfundraising+amount'}: <b>{$currency}{$d.dto->amount}</b></span>{/capture}
+        <div class="ow_smallmargin">{decorator name='ipc' infoString=$infoString content=$content avatar=$d.avatar}</div>
+        {/foreach}
+    {/block_decorator}
+    {/if}
+
+    {add_content key='ocsfundraising.view.content.after_project_description'}
+</div>
+<div class="ow_right ow_superwide">
+
+    {block_decorator name='box' type='empty' iconClass='ow_ic_picture' langLabel='event+view_page_image_block_cap_label' addClass="ow_std_margin clearfix"}
+    {if !empty($imageSrc)}<img src="{$imageSrc}" alt="" style="float: right;margin: 5px;" />{/if}{$project.dto->description}
+    {/block_decorator}
+    {*add_content key='socialsharing.get_sharing_buttons'*}
+    {$comments}
+</div>
+</div>

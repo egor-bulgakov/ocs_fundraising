@@ -19,3 +19,4 @@
 BOL_BillingService::getInstance()->deactivateProduct('ocsfundraising_donation');
 
 BOL_ComponentAdminService::getInstance()->deleteWidget('OCSFUNDRAISING_CMP_GoalWidget');
+BOL_ComponentAdminService::getInstance()->deleteWidget('OCSFUNDRAISING_CMP_UserProjectsWidget');

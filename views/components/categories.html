@@ -1,0 +1,18 @@
+{block_decorator name='box' addClass='ow_stdmargin' langLabel='ocsfundraising+categories'}
+{if $categories}
+<table class="ow_table_2" style="margin: 0px">
+    {foreach from=$categories item='cat'}
+    <tr>
+        <td style="width: 80%">
+            <div class="ow_txtleft">
+                <a href="{url_for_route for="ocsfundraising.category:[id=>`$cat->id`]"}">{text key="ocsfundraising+category_`$cat->id`"}</a>
+            </div>
+        </td>
+        <td>{if isset($counters[$cat->id])}{$counters[$cat->id]}{else}0{/if}</td>
+    </tr>
+    {/foreach}
+</table>
+{else}
+<div class="ow_nocontent">{text key='ocsfundraising+no_categories_added'}</div>
+{/if}
+{/block_decorator}

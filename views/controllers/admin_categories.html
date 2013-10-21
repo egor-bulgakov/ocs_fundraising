@@ -1,0 +1,38 @@
+{$menu}
+
+<div class="clearfix">
+    <div class="ow_left ow_wide">
+        {block_decorator name='box_cap' langLabel='ocsfundraising+categories'}{/block_decorator}
+        {block_decorator name='box'}
+        {if $categories}
+        <table class="ow_table_2 cat_rows">
+            {foreach from=$categories item='cat'}
+            <tr class="ow_alt1 category_tr" id="cat_{$cat->id}">
+                <td style="width: 80%">
+                    <div class="ow_txtleft ow_small" style="padding: 5px 0px;">
+                        {text_edit key="ocsfundraising+category_`$cat->id`"}
+                    </div>
+                </td>
+                {*<td>{$counters[$cat->id]}</td>*}
+                <td class="cat_actions_cont">
+                    <div style="width: 35px;">
+                        <a class="ow_lbutton ow_red category_delete" data-ref="{$cat->id}" style="display: none;" href="javascript://">{text key="admin+delete"}</a>
+                    </div>
+                </td>
+            </tr>
+            {/foreach}
+        </table>
+        {else}
+            <div class="ow_nocontent">{text key='ocsfundraising+no_categories_added'}</div>
+        {/if}
+        {/block_decorator}
+    </div>
+    <div class="ow_right ow_narrow">
+        {block_decorator name='box_cap' langLabel='ocsfundraising+add_category' iconClass='ow_ic_add'}{/block_decorator}
+        {block_decorator name='box'}
+        {form name='category-add-form'}
+        <div class="ow_smallmargin">{input name='name'}</div> {submit name='add'}
+        {/form}
+        {/block_decorator}
+    </div>
+</div>

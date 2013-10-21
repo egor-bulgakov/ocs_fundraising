@@ -27,12 +27,16 @@ class OCSFUNDRAISING_CMP_GoalEdit extends OW_Component
         $service = OCSFUNDRAISING_BOL_Service::getInstance();
         $goal = $service->getGoalById($goalId);
 
+        $image = $goal['dto']->image ? $service->generateImageUrl($goal['dto']->image, true) : null;
+        $this->assign('image', $image);
+
         $form->getElement('goalId')->setValue($goalId);
         $form->getElement('name')->setValue($goal['dto']->name);
         $form->getElement('description')->setValue($goal['dto']->description);
         $form->getElement('target')->setValue($goal['dto']->amountTarget);
         $form->getElement('current')->setValue($goal['dto']->amountCurrent);
         $form->getElement('min')->setValue(floatval($goal['dto']->amountMin));
+        $form->getElement('category')->setValue(floatval($goal['dto']->categoryId));
         if ( $goal['dto']->endStamp )
         {
 	        $date = date('Y/m/d', $goal['dto']->endStamp);
@@ -54,21 +58,38 @@ class EditGoalForm extends Form
         parent::__construct('edit-goal-form');
 
         $this->setAction(OW::getRouter()->urlFor('OCSFUNDRAISING_CTRL_Admin', 'editGoal'));
+        $this->setEnctype(Form::ENCTYPE_MULTYPART_FORMDATA);
         
         $lang = OW::getLanguage();
 
         $id = new HiddenField('goalId');
         $this->addElement($id);
-        
+
         $name = new TextField('name');
         $name->setRequired(true);
         $name->setLabel($lang->text('ocsfundraising', 'name'));
         $this->addElement($name);
-        
-        $desc = new Textarea('description');
+
+        $btnSet = array(BOL_TextFormatService::WS_BTN_IMAGE, BOL_TextFormatService::WS_BTN_VIDEO, BOL_TextFormatService::WS_BTN_HTML);
+        $desc = new WysiwygTextarea('description', $btnSet);
+        $desc->setRequired(true);
+        $sValidator = new StringValidator(1, 50000);
+        $desc->addValidator($sValidator);
         $desc->setLabel($lang->text('ocsfundraising', 'description'));
         $this->addElement($desc);
-        
+
+        $category = new Selectbox('category');
+        $category->setLabel($lang->text('ocsfundraising', 'category'));
+        $list = OCSFUNDRAISING_BOL_Service::getInstance()->getCategoryList();
+        if ( $list )
+        {
+            foreach ( $list as $cat )
+            {
+                $category->addOption($cat->id, $lang->text('ocsfundraising', 'category_'.$cat->id));
+            }
+        }
+        $this->addElement($category);
+
         $target = new TextField('target');
         $target->setRequired(true);
         $target->setLabel($lang->text('ocsfundraising', 'target_amount'));
@@ -89,6 +110,10 @@ class EditGoalForm extends Form
         
         $end->setLabel($lang->text('ocsfundraising', 'end_date'));
         $this->addElement($end);
+
+        $imageField = new FileField('image');
+        $imageField->setLabel($lang->text('ocsfundraising', 'image_label'));
+        $this->addElement($imageField);
         
         $submit = new Submit('update');
         $submit->setLabel($lang->text('base', 'save'));

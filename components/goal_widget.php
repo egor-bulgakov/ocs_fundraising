@@ -31,6 +31,7 @@ class OCSFUNDRAISING_CMP_GoalWidget extends BASE_CLASS_Widget
         		$this->assign('error', OW::getLanguage()->text('ocsfundraising', 'goal_not_found'));
         		return;
         	}
+            $goal['dto']->description = mb_substr($goal['dto']->description, 0, 250) . (mb_strlen($goal['dto']->description) > 250 ? '...' : '');
         	$this->assign('goal', $goal);
         }
         else 
@@ -83,11 +84,17 @@ class OCSFUNDRAISING_CMP_GoalWidget extends BASE_CLASS_Widget
         $this->assign('currency', BOL_BillingService::getInstance()->getActiveCurrency());
         
         $this->assign('donators', (int) $service->countGoalDonators($goalId));
+
+        $image = $goal['dto']->image ? $service->generateImageUrl($goal['dto']->image, true) : null;
+        $this->assign('image', $image);
         
         $js = UTIL_JsGenerator::newInstance()
             ->jQueryEvent('.btn-donate-goal-'.$goal['dto']->id, 'click', 'document.location.href = e.data.href', array('e'),
                 array('href' => OW::getRouter()->urlForRoute('ocsfundraising.donate', array('goalId' => $goal['dto']->id))
-            ));
+            ))
+            ->jQueryEvent('.btn-details-goal-'.$goal['dto']->id, 'click', 'document.location.href = e.data.href', array('e'),
+                array('href' => OW::getRouter()->urlForRoute('ocsfundraising.project', array('id' => $goal['dto']->id))
+                ));
 
         OW::getDocument()->addOnloadScript($js);
     }

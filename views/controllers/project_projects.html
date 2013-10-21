@@ -1,0 +1,66 @@
+{style}
+{literal}
+    .cf_project {
+        width: 170px; margin-right: 8px; float: left;
+        padding: 7px; border-width: 1px;
+        border-radius: 6px 6px 6px 6px;
+        height: 299px;
+    }
+    .project_thumb img { width: 170px; border-width: 1px; }
+    .project_name { margin-bottom: 7px; margin-top: 7px; height: 50px; overflow: hidden; }
+    .project_desc { height: 60px; overflow: hidden; }
+
+    .pledged_wrap {
+        background: none repeat scroll 0 0 #D0D5CB;
+        border-radius: 4px 4px 4px 4px;
+        height: 8px;
+        margin-top: 5px;
+        width: 100%;
+    }
+    .pledged {
+        background: none repeat scroll 0 0 #76CC1E;
+        border-radius: 4px 4px 4px 4px;
+        height: 8px;
+    }
+{/literal}
+{/style}
+
+{$menu}
+
+<div class="clearfix">
+    <div class="ow_left ow_superwide">
+        {if $list}
+        <div class="clearfix">
+        {foreach from=$list item='item'}
+        <div class="cf_project ow_border ow_alt1 ow_smallmargin">
+            <div class="project_thumb ow_alt2"><a href="{$item.url}"><img src="{$item.imageSrc}" /></a></div>
+            <div class="project_info">
+                <div class="project_name">
+                    <b>{$item.dto->name}</b>
+                    <div class="project_author ow_small">{text key='base+by'}: <a href="{$item.userUrl}">{$item.name}</a>
+                        {if $item.dto->categoryId}{text key='ocsfundraising+in'} <a href="{$item.categoryUrl}">{text key="ocsfundraising+category_`$item.dto->categoryId`"}</a>{/if}</div>
+                </div>
+                <div class="project_desc ow_small">{$item.dto->description}</div>
+                <div class="pledged_wrap"><div class="pledged" style="width: {if $item.percent gt 100}100{else}{$item.percent}{/if}%"></div></div>
+                <div class="ow_tiny" style="text-transform: uppercase">
+                {text key='ocsfundraising+funded'}: <b>{$item.percent}%</b>
+                {if $item.days}<br />{text key='ocsfundraising+days_to_go'}: <b>{$item.days}</b>{/if}
+                </div>
+            </div>
+        </div>
+        {/foreach}
+        </div>
+        {$paging}
+
+        {else}
+            <div class="ow_nocontent"></div>
+        {/if}
+    </div>
+    <div class="ow_right ow_supernarrow">
+        {$categories}
+
+        {if $canAdd}
+            <div class="ow_center">{decorator name='button' langLabel='ocsfundraising+btn_add_project' id='btn-add-project' class='ow_ic_add'}</div>
+        {/if}
+    </div>
+</div>

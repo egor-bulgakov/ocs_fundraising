@@ -72,4 +72,54 @@ class OCSFUNDRAISING_BOL_GoalDao extends OW_BaseDao
     	
     	$this->dbo->query($sql, array('time' => time()));
     }
+
+    public function findGoalsWithStatus( $status, $page, $limit, $categoryId )
+    {
+        $start = ($page - 1) * $limit;
+
+        $example = new OW_Example();
+        $example->andFieldEqual('status', $status);
+        if ( $categoryId )
+        {
+            $example->andFieldEqual('categoryId', $categoryId);
+        }
+        $example->setOrder('`startStamp` DESC');
+        $example->setLimitClause($start, $limit);
+
+        return $this->findListByExample($example);
+    }
+
+    public function countGoalsWithStatus( $status, $categoryId )
+    {
+        $example = new OW_Example();
+        $example->andFieldEqual('status', $status);
+        if ( $categoryId )
+        {
+            $example->andFieldEqual('categoryId', $categoryId);
+        }
+
+        return $this->countByExample($example);
+    }
+
+    public function findUserGoals( $userId, $page, $limit )
+    {
+        $start = ($page - 1) * $limit;
+
+        $example = new OW_Example();
+        $example->andFieldEqual('status', 'active');
+        $example->andFieldEqual('ownerId', $userId);
+        $example->setOrder('`startStamp` DESC');
+        $example->setLimitClause($start, $limit);
+
+        return $this->findListByExample($example);
+    }
+
+    public function getCategoriesCount()
+    {
+        $sql = "SELECT `status`, `categoryId`, COUNT(*) AS `count` FROM `".$this->getTableName()."`
+            GROUP BY `categoryId`
+            HAVING `status` = 'active'";
+
+        return $this->dbo->queryForList($sql);
+    }
 }

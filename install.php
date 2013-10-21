@@ -38,6 +38,18 @@ $sql = "CREATE TABLE IF NOT EXISTS `".OW_DB_PREFIX."ocsfundraising_goal` (
   `startStamp` int(11) NOT NULL,
   `endStamp` int(11) DEFAULT NULL,
   `status` enum('active','complete') NOT NULL DEFAULT 'active',
+  `ownerType` VARCHAR(50) NULL DEFAULT 'admin',
+  `ownerId` INT NULL DEFAULT NULL,
+  `image` VARCHAR( 50 ) NULL DEFAULT NULL,
+  `categoryId` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;";
+
+OW::getDbo()->query($sql);
+
+$sql = "CREATE TABLE IF NOT EXISTS `".OW_DB_PREFIX."ocsinterests_category` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sortOrder` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;";
 
@@ -52,6 +64,12 @@ try {
     BOL_BillingService::getInstance()->saveProduct($product);
 }
 catch ( Exception $e ) { }
+
+$authorization = OW::getAuthorization();
+$groupName = 'ocsfundraising';
+$authorization->addGroup($groupName);
+$authorization->addAction($groupName, 'add_goal');
+$authorization->addAction($groupName, 'add_comment');
 
 OW::getPluginManager()->addPluginSettingsRouteName('ocsfundraising', 'ocsfundraising.admin');
 
