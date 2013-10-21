@@ -409,7 +409,7 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
             throw new Redirect404Exception;
         }
 
-        if ( OW::getUser() != $proj->ownerId )
+        if ( OW::getUser()->getId() != $proj['dto']->ownerId )
         {
             throw new Redirect403Exception;
         }

@@ -45,7 +45,7 @@ try {
 }
 catch ( Exception $e ) { }
 
-$sql = "CREATE TABLE IF NOT EXISTS `".OW_DB_PREFIX."ocsinterests_category` (
+$sql = "CREATE TABLE IF NOT EXISTS `".OW_DB_PREFIX."ocsfundraising_category` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `sortOrder` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
@@ -59,7 +59,10 @@ catch ( Exception $e ) { }
 // add new auth action
 try {
     $authorization = OW::getAuthorization();
-    $authorization->addAction('ocsfundraising', 'add_comment');
+    $groupName = 'ocsfundraising';
+    $authorization->addGroup($groupName);
+    $authorization->addAction($groupName, 'add_goal');
+    $authorization->addAction($groupName, 'add_comment');
 }
 catch ( Exception $e ) { }
 
