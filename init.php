@@ -90,6 +90,7 @@ function ocsfundraising_add_auth_labels( BASE_CLASS_EventCollector $event )
                 'label' => $language->text('ocsfundraising', 'auth_group_label'),
                 'actions' => array(
                     'add_goal' => $language->text('ocsfundraising', 'auth_action_label_add_goal'),
+                    'add_comment' => $language->text('ocsfundraising', 'auth_action_label_add_comment'),
                 )
             )
         )
