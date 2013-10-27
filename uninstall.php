@@ -17,4 +17,3 @@
  */
 
 BOL_BillingService::getInstance()->deleteProduct('ocsfundraising_donation');
-OW::getNavigation()->deleteMenuItem('ocsfundraising', 'projects');

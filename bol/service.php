@@ -171,6 +171,8 @@ final class OCSFUNDRAISING_BOL_Service
             BOL_LanguageService::getInstance()->deleteKey($key->id, true);
         }
 
+        $this->goalDao->unsetCategory($categoryId);
+
         return true;
     }
 
@@ -190,6 +192,8 @@ final class OCSFUNDRAISING_BOL_Service
     public function addGoal( OCSFUNDRAISING_BOL_Goal $goal )
     {
     	$this->goalDao->save($goal);
+
+        return $goal->id;
     }
 
     /**
@@ -330,6 +334,44 @@ final class OCSFUNDRAISING_BOL_Service
         return $result;
     }
 
+    public function getPopularGoalList( $page, $limit )
+    {
+        $list = $this->goalDao->findPopularGoals($page, $limit);
+
+        $result = array();
+        if ( $list )
+        {
+            $userIdList = array();
+            foreach ( $list as $goal )
+            {
+                if ( !in_array($goal->ownerId, $userIdList) )
+                {
+                    $userIdList[] = $goal->ownerId;
+                }
+            }
+
+            $userUrlList = BOL_UserService::getInstance()->getUserUrlsForList($userIdList);
+            $userDisplayNames = BOL_UserService::getInstance()->getDisplayNamesForList($userIdList);
+
+            $router = OW::getRouter();
+
+            foreach ( $list as $goal )
+            {
+                $goal->description = mb_substr($goal->description, 0, 120);
+                $result[$goal->id]['dto'] = $goal;
+                $result[$goal->id]['imageSrc'] = $goal->image ? $this->generateImageUrl($goal->image, true) : $this->generateDefaultImageUrl();
+                $result[$goal->id]['url'] = $router->urlForRoute('ocsfundraising.project', array('id' => $goal->id));
+                $result[$goal->id]['userUrl'] = !empty($userUrlList[$goal->ownerId]) ? $userUrlList[$goal->ownerId] : null;
+                $result[$goal->id]['name'] = !empty($userDisplayNames[$goal->ownerId]) ? $userDisplayNames[$goal->ownerId] : null;
+                $result[$goal->id]['categoryUrl'] = $goal->categoryId ? $router->urlForRoute('ocsfundraising.category', array('id' => $goal->categoryId)) : null;
+                $result[$goal->id]['days'] = $goal->endStamp && ($goal->endStamp > time()) ? ceil(($goal->endStamp - time()) / 3600 / 24) : null;
+                $result[$goal->id]['percent'] = $goal->amountCurrent / $goal->amountTarget * 100;
+            }
+        }
+
+        return $result;
+    }
+
     /**
      * @param $status
      * @param null $categoryId
@@ -338,6 +380,11 @@ final class OCSFUNDRAISING_BOL_Service
     public function getGoalsWithStatusCount( $status, $categoryId = null )
     {
         return $this->goalDao->countGoalsWithStatus($status, $categoryId);
+    }
+
+    public function getPopularGoalsCount()
+    {
+        return $this->goalDao->countPopularGoals();
     }
 
     /**

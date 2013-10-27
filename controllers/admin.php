@@ -140,7 +140,7 @@ $("a.ocs_goal_delete").click(function(){
 
         if ( !empty($_GET['del-cat-id']) )
         {
-            $service->deleteCategory($_GET['qId']);
+            $service->deleteCategory($_GET['del-cat-id']);
             OW::getFeedback()->info($lang->text('ocsfundraising', 'category_deleted'));
             $this->redirect(OW::getRouter()->urlForRoute('ocsfundraising.admin_categories'));
         }

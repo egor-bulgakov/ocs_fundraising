@@ -78,7 +78,16 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
                 $goal->image = uniqid();
             }
 
-            $service->addGoal($goal);
+            $id = $service->addGoal($goal);
+
+            // newsfeed
+            $event = new OW_Event('feed.action', array(
+                'pluginKey' => 'ocsfundraising',
+                'entityType' => 'ocsfundraising_project',
+                'entityId' => $id,
+                'userId' => $goal->ownerId
+            ));
+            OW::getEventManager()->trigger($event);
 
             if ( $imagePosted && $imageValid )
             {
@@ -159,6 +168,11 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
 
         $this->assign('canAdd', OW::getUser()->isAuthorized('ocsfundraising', 'add_goal'));
 
+        $script = '$("#btn-add-project").click(function(){
+            document.location.href = '.json_encode(OW::getRouter()->urlForRoute('ocsfundraising.add_goal')).';
+        });';
+        OW::getDocument()->addOnloadScript($script);
+
         $heading = $lang->text('ocsfundraising', 'crowdfunding_projects')
             . ': ' . $lang->text('ocsfundraising', 'category_' . $categoryId);
 
@@ -195,6 +209,38 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
         OW::getDocument()->addOnloadScript($script);
 
         $this->setPageHeading($lang->text('ocsfundraising', 'archived_projects'));
+    }
+
+    public function popular( )
+    {
+        $this->setTemplate(
+            OW::getPluginManager()->getPlugin('ocsfundraising')->getCtrlViewDir() . 'project_projects.html'
+        );
+
+        $service = OCSFUNDRAISING_BOL_Service::getInstance();
+        $lang = OW::getLanguage();
+
+        $page = !empty($_GET['page']) && (int) $_GET['page'] ? abs((int) $_GET['page']) : 1;
+        $limit = 20;
+        $list = $service->getPopularGoalList($page, $limit);
+        $this->assign('list', $list);
+
+        $total = $service->getPopularGoalsCount();
+        $pages = (int) ceil($total / $limit);
+        $paging = new BASE_CMP_Paging($page, $pages, $limit);
+        $this->assign('paging', $paging->render());
+
+        $this->addComponent('categories', new OCSFUNDRAISING_CMP_Categories());
+        $this->addComponent('menu', $this->getMenu());
+
+        $this->assign('canAdd', OW::getUser()->isAuthorized('ocsfundraising', 'add_goal'));
+
+        $script = '$("#btn-add-project").click(function(){
+            document.location.href = '.json_encode(OW::getRouter()->urlForRoute('ocsfundraising.add_goal')).';
+        });';
+        OW::getDocument()->addOnloadScript($script);
+
+        $this->setPageHeading($lang->text('ocsfundraising', 'popular_projects'));
     }
 
     public function project( array $params )
@@ -433,10 +479,17 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
         $items[] = $item;
 
         $item = new BASE_MenuItem();
+        $item->setLabel($lang->text('ocsfundraising', 'popular'));
+        $item->setUrl($router->urlForRoute('ocsfundraising.popular'));
+        $item->setIconClass('ow_ic_chat');
+        $item->setOrder(1);
+        $items[] = $item;
+
+        $item = new BASE_MenuItem();
         $item->setLabel($lang->text('ocsfundraising', 'archive'));
         $item->setUrl($router->urlForRoute('ocsfundraising.archive'));
         $item->setIconClass('ow_ic_folder');
-        $item->setOrder(1);
+        $item->setOrder(2);
         $items[] = $item;
 
         $menu = new BASE_CMP_ContentMenu($items);

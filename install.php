@@ -73,9 +73,5 @@ $authorization->addAction($groupName, 'add_comment');
 
 OW::getPluginManager()->addPluginSettingsRouteName('ocsfundraising', 'ocsfundraising.admin');
 
-OW::getNavigation()->addMenuItem(
-    OW_Navigation::MAIN, 'ocsfundraising.list', 'ocsfundraising', 'projects', OW_Navigation::VISIBLE_FOR_ALL
-);
-
 $path = OW::getPluginManager()->getPlugin('ocsfundraising')->getRootDir() . 'langs.zip';
 BOL_LanguageService::getInstance()->importPrefixFromZip($path, 'ocsfundraising');

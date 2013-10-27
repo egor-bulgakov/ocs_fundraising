@@ -49,6 +49,10 @@ OW::getRouter()->addRoute(
 );
 
 OW::getRouter()->addRoute(
+    new OW_Route('ocsfundraising.popular', '/crowdfunding/projects/popular', 'OCSFUNDRAISING_CTRL_Project', 'popular')
+);
+
+OW::getRouter()->addRoute(
     new OW_Route('ocsfundraising.category', '/crowdfunding/category/:id', 'OCSFUNDRAISING_CTRL_Project', 'category')
 );
 
@@ -97,3 +101,47 @@ function ocsfundraising_add_auth_labels( BASE_CLASS_EventCollector $event )
     );
 }
 OW::getEventManager()->bind('admin.add_auth_labels', 'ocsfundraising_add_auth_labels');
+
+
+function ocsfundraising_feed_on_project_add( OW_Event $e )
+{
+    $params = $e->getParams();
+
+    if ( $params['entityType'] != 'ocsfundraising_project' )
+    {
+        return;
+    }
+
+    $service = OCSFUNDRAISING_BOL_Service::getInstance();
+    $project = $service->getGoalById($params['entityId']);
+
+    $url = OW::getRouter()->urlForRoute('ocsfundraising.project', array('id' => $project['dto']->id));
+    $image = $project['dto']->image ? $service->generateImageUrl($project['dto']->image) : null;
+    $title = UTIL_String::truncate(strip_tags($project['dto']->name), 100, '...');
+    $content = UTIL_String::truncate(strip_tags($project['dto']->description), 150, '...');
+
+    if ( $image )
+    {
+        $markup  = '<div class="clearfix ow_newsfeed_large_image"><div class="ow_newsfeed_item_picture">';
+        $markup .= '<a href="' . $url . '"><img src="' . $image . '" /></a>';
+        $markup .= '</div><div class="ow_newsfeed_item_content"><a href="' . $url . '">' . $title . '</a><div class="ow_remark">';
+        $markup .= $content . '</div></div></div>';
+    }
+    else {
+        $markup = '<div class="ow_newsfeed_item_content"><a href="' . $url . '">' . $title . '</a><div class="ow_remark">';
+        $markup .= $content . '</div></div>';
+    }
+
+    $data = array(
+        'time' => (int) $project->startStamp,
+        'ownerId' => $project->ownerId,
+        'string' => OW::getLanguage()->text('ocsfundraising', 'feed_add_project_label'),
+        'content' => '<div class="clearfix">' . $markup . '</div>',
+        'view' => array(
+            'iconClass' => 'ow_ic_folder'
+        )
+    );
+
+    $e->setData($data);
+}
+OW::getEventManager()->bind('feed.on_entity_add', 'ocsfundraising_feed_on_project_add');
