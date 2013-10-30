@@ -26,7 +26,8 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
 
         if ( !OW::getUser()->isAuthorized('ocsfundraising', 'add_goal') )
         {
-
+            $this->setTemplate(OW::getPluginManager()->getPlugin('base')->getCtrlViewDir() . 'authorization_failed.html');
+            return;
         }
 
         $service = OCSFUNDRAISING_BOL_Service::getInstance();
@@ -269,7 +270,7 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
 
 
         $viewerId = OW::getUser()->getId();
-        $isOwner = $project['dto']->ownerId == $viewerId;
+        $isOwner = $viewerId && ($project['dto']->ownerId == $viewerId);
         $this->assign('isOwner', $isOwner);
 
         $avatar = BOL_AvatarService::getInstance()->getDataForUserAvatars(array($project['dto']->ownerId));
@@ -356,7 +357,7 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
         }
 
         $viewerId = OW::getUser()->getId();
-        $isOwner = $project['dto']->ownerId == $viewerId;
+        $isOwner = $viewerId && ($project['dto']->ownerId == $viewerId);
 
         if ( !$isOwner )
         {
@@ -380,6 +381,8 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
             $goal->description = UTIL_HtmlTag::stripJs($values['description']);
             $goal->amountMin = floatval($values['min']);
             $goal->amountTarget = floatval($values['target']);
+            $goal->ownerType = 'user';
+            $goal->ownerId = OW::getUser()->getId();
             $date = explode('/', $values['end']);
             if ( !empty($date[1]) && !empty($date[2]) && !empty($date[0]) )
             {
@@ -455,7 +458,8 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
             throw new Redirect404Exception;
         }
 
-        if ( OW::getUser()->getId() != $proj['dto']->ownerId )
+        $viewerId = OW::getUser()->getId();
+        if ( $viewerId &&  ($viewerId != $proj['dto']->ownerId) )
         {
             throw new Redirect403Exception;
         }

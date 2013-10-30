@@ -59,6 +59,8 @@ class OCSFUNDRAISING_CTRL_Admin extends ADMIN_CTRL_Abstract
         	$goal->amountTarget = floatval($values['target']);
         	$goal->amountCurrent = 0.0;
         	$goal->startStamp = time();
+            $goal->ownerType = 'admin';
+            $goal->ownerId = OW::getUser()->getId();
             $goal->categoryId = $values['category'];
         	$date = explode('/', $values['end']);
         	if ( !empty($date[1]) && !empty($date[2]) && !empty($date[0]) )
@@ -235,6 +237,8 @@ $("a.ocs_goal_delete").click(function(){
             $goal['dto']->amountCurrent = floatval($_POST['current']);
             $goal['dto']->amountMin = floatval($_POST['min']);
             $goal['dto']->categoryId = $_POST['category'];
+            $goal['dto']->ownerType = 'admin';
+            $goal['dto']->ownerId = OW::getUser()->getId();
             if ( !empty($_POST['month_end']) && !empty($_POST['day_end']) && !empty($_POST['year_end']) )
             {
                 $goal['dto']->endStamp = mktime(0, 0, 0, $_POST['month_end'], $_POST['day_end'], $_POST['year_end']);
