@@ -110,7 +110,7 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
         $lang = OW::getLanguage();
 
         $page = !empty($_GET['page']) && (int) $_GET['page'] ? abs((int) $_GET['page']) : 1;
-        $limit = 20;
+        $limit = 9;
         $list = $service->getGoalListWithStatus('active', $page, $limit);
         $this->assign('list', $list);
 
@@ -155,7 +155,7 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
         );
 
         $page = !empty($_GET['page']) && (int) $_GET['page'] ? abs((int) $_GET['page']) : 1;
-        $limit = 20;
+        $limit = 9;
         $list = $service->getGoalListWithStatus('active', $page, $limit, $categoryId);
         $this->assign('list', $list);
 
@@ -190,7 +190,7 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
         $lang = OW::getLanguage();
 
         $page = !empty($_GET['page']) && (int) $_GET['page'] ? abs((int) $_GET['page']) : 1;
-        $limit = 20;
+        $limit = 9;
         $list = $service->getGoalListWithStatus('complete', $page, $limit);
         $this->assign('list', $list);
 
@@ -222,7 +222,7 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
         $lang = OW::getLanguage();
 
         $page = !empty($_GET['page']) && (int) $_GET['page'] ? abs((int) $_GET['page']) : 1;
-        $limit = 20;
+        $limit = 9;
         $list = $service->getPopularGoalList($page, $limit);
         $this->assign('list', $list);
 
