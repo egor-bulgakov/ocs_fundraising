@@ -24,13 +24,6 @@ class OCSFUNDRAISING_CTRL_Admin extends ADMIN_CTRL_Abstract
     {
     	$lang = OW::getLanguage();
         $service = OCSFUNDRAISING_BOL_Service::getInstance();
-        
-    	if ( !empty($_GET['delete-goal']) )
-    	{
-    		$service->deleteGoal($_GET['delete-goal']);
-    		OW::getFeedback()->info($lang->text('ocsfundraising', 'goal_deleted'));
-    		$this->redirectToAction('index');
-    	}
     	
         $form = new FormAddGoal();
         $this->addForm($form);
@@ -113,18 +106,31 @@ class OCSFUNDRAISING_CTRL_Admin extends ADMIN_CTRL_Abstract
     );
 });
 
-$("a.ocs_goal_delete").click(function(){
-    var goalId = $(this).data("gid");
+$("#btn-delete-selected").click(function(){
+    if ( !$(".project_checkbox:checked").length )
+    {
+        return;
+    }
+
     if ( confirm('.json_encode($lang->text('base', 'are_you_sure')).') )
     {
-        document.location.href = "'.OW::getRouter()->urlForRoute('ocsfundraising.admin').'?delete-goal=" + goalId;
-    }
-    else
-    {
-        return false;
+        var idList = new Array();
+        $(".project_checkbox:checked").each(function() { idList.push($(this).data("gid")); } );
+        $.ajax({
+            url: '.json_encode(OW::getRouter()->urlForRoute('ocsfundraising.delete_projects')).',
+            type: "POST",
+            data: { idList : idList },
+            dataType: "json",
+            success: function(data) {
+                if ( data.result == true ) {
+                    document.location.reload();
+                }
+            }
+        });
     }
 });
 ';
+
         OW::getDocument()->addOnloadScript($js);
 
         $this->assign('currency', BOL_BillingService::getInstance()->getActiveCurrency());
@@ -170,7 +176,7 @@ $("a.ocs_goal_delete").click(function(){
         $this->addComponent('menu', $this->getMenu());
 
         OW::getDocument()->addScript(
-            OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery-ui-1.8.9.custom.min.js'
+            OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery-ui.min.js'
         );
 
         $script =
@@ -288,7 +294,7 @@ $("a.ocs_goal_delete").click(function(){
     	$this->assign('currency', BOL_BillingService::getInstance()->getActiveCurrency());
     	
     	$page = !empty($_GET['page']) ? (int) $_GET['page'] : 1;
-    	$donations = $service->getDonationList($goalId, 'all', $page, 20);
+    	$donations = $service->getDonationList($goalId, 'all', $page, 20, true);
     	$count = $service->countGoalDonations($goalId);
     	$this->assign('donations', $donations);
     	
@@ -326,6 +332,26 @@ $("a.ocs_goal_delete").click(function(){
         }
 
         exit;
+    }
+
+    public function deleteProjects()
+    {
+        if ( !OW::getRequest()->isAjax() )
+        {
+            exit();
+        }
+
+        $projects = $_POST['idList'];
+
+        $service = OCSFUNDRAISING_BOL_Service::getInstance();
+        foreach ( $projects as $id )
+        {
+            $service->deleteGoal($id);
+        }
+
+        OW::getFeedback()->info(OW::getLanguage()->text('ocsfundraising', 'goal_deleted'));
+
+        exit(json_encode(array('result' => true)));
     }
 
     private function getMenu()

@@ -23,6 +23,7 @@ $sql = "CREATE TABLE IF NOT EXISTS `".OW_DB_PREFIX."ocsfundraising_donation` (
 `username` varchar( 100 ) DEFAULT NULL ,
 `amount` float( 9, 2 ) NOT NULL ,
 `donationStamp` int( 11 ) NOT NULL DEFAULT '0',
+`anonymous` TINYINT( 1 ) NULL DEFAULT '0',
 PRIMARY KEY ( `id` )
 ) ENGINE = MYISAM DEFAULT CHARSET = utf8;";
 

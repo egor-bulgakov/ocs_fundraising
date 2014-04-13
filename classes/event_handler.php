@@ -119,6 +119,116 @@ class OCSFUNDRAISING_CLASS_EventHandler
         $e->setData($data);
     }
 
+    public function addCrowdfundingSearchResultGroup( BASE_CLASS_EventCollector $ec )
+    {
+        $group = array(
+            'pluginKey' => 'ocsfundraising',
+            'key' => 'ocsfundraising',
+            'priority' => 100,
+            'label' => OW::getLanguage()->text('ocsfundraising', 'projects'),
+            'url' => OW::getRouter()->urlForRoute('ocsfundraising.list')
+        );
+
+        $ec->add($group);
+    }
+
+    public function searchCrowdfundingGroup( BASE_CLASS_EventCollector $ec )
+    {
+        $params = $ec->getParams();
+        $key = $params['key'];
+
+        if ( $key == 'ocsfundraising' && OW::getPluginManager()->isPluginActive($key) )
+        {
+            $query = $params['query'];
+            $offset = (int) $params['offset'];
+            $limit = (int) $params['limit'];
+
+            $projectDao = OCSFUNDRAISING_BOL_GoalDao::getInstance();
+            $sql =
+                "SELECT * FROM `" . $projectDao->getTableName() . "`
+                WHERE `status` = 'active'
+                    AND (`name` LIKE :query collate utf8_general_ci OR `description` LIKE :query collate utf8_general_ci)
+                ORDER BY `startStamp` DESC LIMIT :offset, :limit";
+
+            $found = OW::getDbo()->queryForObjectList(
+                $sql,
+                $projectDao->getDtoClassName(),
+                array('query' => '%'.$query.'%', 'offset' => $offset, 'limit' => $limit)
+            );
+
+            $router = OW::getRouter();
+            $service = OCSFUNDRAISING_BOL_Service::getInstance();
+            $list = array();
+            if ( $found )
+            {
+                foreach ( $found as $item )
+                {
+                    $data = array(
+                        'id' => $key . '_' . $item->id,
+                        'url' => $router->urlForRoute('ocsfundraising.project', array('id' => $item->id))
+                    );
+                    $image = $item->image ? $service->generateImageUrl($item->image, true) : $service->generateDefaultImageUrl();
+                    $data['avatar'] = array('src' => $image, 'url' => $data['url']);
+                    $data['text'] = $item->name;
+                    $data['info'] = $item->description;
+
+                    $list[$data['id']] = $data;
+                }
+            }
+
+            $result[$key] = $list;
+
+            $ec->add($result);
+        }
+    }
+
+    public function countCrowdfundingGroupResult( BASE_CLASS_EventCollector $ec )
+    {
+        $params = $ec->getParams();
+        $key = $params['key'];
+
+        if ( $key == 'ocsfundraising' && OW::getPluginManager()->isPluginActive($key) )
+        {
+            $query = $params['query'];
+
+            $projectDao = OCSFUNDRAISING_BOL_GoalDao::getInstance();
+            $sql =
+                "SELECT COUNT(*) FROM `" . $projectDao->getTableName() . "`
+                WHERE `status` = 'active'
+                    AND (`name` LIKE :query collate utf8_general_ci OR `description` LIKE :query collate utf8_general_ci)";
+
+            $count = OW::getDbo()->queryForColumn($sql, array('query' => '%'.$query.'%'));
+
+            $result[$key] = $count;
+
+            $ec->add($result);
+        }
+    }
+
+    public function socialSharingGetCrowdfundingInfo( OW_Event $event )
+    {
+        $params = $event->getParams();
+        $data = $event->getData();
+        $data['display'] = false;
+
+        if ( empty($params['entityId']) )
+        {
+            return;
+        }
+
+        if ( $params['entityType'] == 'ocsfundraising' )
+        {
+            $project = OCSFUNDRAISING_BOL_Service::getInstance()->getGoalById($params['entityId']);
+
+            if ( !empty($project) )
+            {
+                $data['display'] = true;
+            }
+
+            $event->setData($data);
+        }
+    }
+
     public function init()
     {
         $this->genericInit();
@@ -134,5 +244,9 @@ class OCSFUNDRAISING_CLASS_EventHandler
         $em = OW::getEventManager();
         
         $em->bind('feed.on_entity_add', array($this, 'feedOnProjectAdd'));
+        $em->bind('ocsqsearch.collect_group', array($this, 'addCrowdfundingSearchResultGroup'));
+        $em->bind('ocsqsearch.search_in_groups', array($this, 'searchCrowdfundingGroup'));
+        $em->bind('ocsqsearch.count_search_result', array($this, 'countCrowdfundingGroupResult'));
+        $em->bind('socialsharing.get_entity_info', array($this, 'socialSharingGetCrowdfundingInfo'));
     }
 }

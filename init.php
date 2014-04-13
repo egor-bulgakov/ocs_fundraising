@@ -33,6 +33,10 @@ OW::getRouter()->addRoute(
 );
 
 OW::getRouter()->addRoute(
+    new OW_Route('ocsfundraising.delete_projects', '/admin/plugins/ocsfundraising/delete-projects', 'OCSFUNDRAISING_CTRL_Admin', 'deleteProjects')
+);
+
+OW::getRouter()->addRoute(
     new OW_Route('ocsfundraising.donate', '/fundraising/donate/:goalId', 'OCSFUNDRAISING_CTRL_Donate', 'index')
 );
 

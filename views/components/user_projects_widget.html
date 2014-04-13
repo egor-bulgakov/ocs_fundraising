@@ -9,17 +9,4 @@
 </div>
 {/capture}
 <div class="ow_smallmargin">{decorator name='ipc' infoString=$infoString content=$content imageSrc=$item.imageSrc imageTitle=$item.dto->name}</div>
-
-{*<div class="cf_project ow_border ow_alt1 ow_smallmargin">
-    <div class="project_thumb ow_alt2"><a href="{$item.url}"><img src="{$item.imageSrc}" /></a></div>
-    <div class="project_info">
-        <div class="project_name">
-            <b>{$item.dto->name}</b>
-            <div class="project_author ow_small">
-                {if $item.dto->categoryId}{text key='ocsfundraising+in'} <a href="{$item.categoryUrl}">{text key="ocsfundraising+category_`$item.dto->categoryId`"}</a>{/if}
-            </div>
-        </div>
-        <div class="project_desc ow_small">{$item.dto->description}</div>
-    </div>
-</div>*}
 {/foreach}

@@ -46,7 +46,7 @@
     {block_decorator name='box' addClass='ow_std_margin' iconClass='ow_ic_user' langLabel='ocsfundraising+latest_donations'}
         {foreach from=$latest item='d'}
         {capture assign='infoString'}
-        {if $d.dto->userId}<a href="{url_for_route for="base_user_profile:[username=>`$d.username`]"}">{$d.displayName}</a>{else}{$d.displayName}{/if} <span class="ow_tiny">{$d.dto->donationStamp}</span>
+        {if $d.username}<a href="{url_for_route for="base_user_profile:[username=>`$d.username`]"}">{$d.displayName}</a>{else}{$d.displayName}{/if} <span class="ow_tiny">{$d.dto->donationStamp}</span>
         {/capture}
         {capture assign='content'}<span class="ow_remark ow_small">{text key='ocsfundraising+amount'}: <b>{$currency}{$d.dto->amount}</b></span>{/capture}
         <div class="ow_smallmargin">{decorator name='ipc' infoString=$infoString content=$content avatar=$d.avatar}</div>
@@ -59,7 +59,9 @@
 <div class="ow_right ow_superwide">
 
     {block_decorator name='box' type='empty' iconClass='ow_ic_picture' langLabel='ocsfundraising+view_page_desc_block' addClass="ow_std_margin clearfix"}
-    {if !empty($imageSrc)}<img src="{$imageSrc}" alt="" style="float: right;margin: 5px;" />{/if}{$project.dto->description}
+    {if !empty($imageSrc)}<img src="{$imageSrc}" alt="" style="float: right;margin: 5px;" />{/if}
+    <div class="ow_smallmargin clearfix">{$project.dto->description}</div>
+    {add_content key='socialsharing.get_sharing_buttons' text=$project.dto->description|truncate:100:"" title=$project.dto->name entityType='ocsfundraising' entityId=$project.dto->id image=$imageSrc}
     {/block_decorator}
     {*add_content key='socialsharing.get_sharing_buttons'*}
     {$comments}

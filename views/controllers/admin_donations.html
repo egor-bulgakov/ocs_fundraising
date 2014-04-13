@@ -32,7 +32,14 @@
 <div class="ow_left ow_txtleft" style="width: 55px">
     {decorator name=avatar_item data=$d.avatar}
 </div>
-<div class="ow_left ow_txtleft">{if $d.dto->userId}<a href="{url_for_route for="base_user_profile:[username=>`$d.username`]"}">{$d.displayName}</a>{else}{$d.displayName}{/if}</div>
+<div class="ow_left ow_txtleft">
+    {if $d.username}
+    <a href="{url_for_route for="base_user_profile:[username=>`$d.username`]"}">{$d.displayName}</a>
+    {else}
+    {$d.displayName}
+    {/if}
+    {if $d.dto->anonymous}<span class="ow_small">({text key='ocsfundraising+donate_anonymously'})</span>{/if}
+</div>
 </div>
 </td>
 <td>{$d.dto->amount}</td>

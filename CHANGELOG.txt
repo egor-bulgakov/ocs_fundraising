@@ -1,0 +1,26 @@
+Apr 13, 2014 - Fundraising / Crowdfunding plugin build 8
+============
+* Projects bulk delete action in admin panel
+* Anonymous donation option added
+* Site Statistics plugin integration
+* Site Quick Search plugin integration
+* Social sharing plugin integration
+
+Mar 30, 2014 - Fundraising / Crowdfunding plugin build 7
+============
+* Missing language key bug fixed
+* Newsfeed activity bug fixed
+
+Oct 27, 2013 - Fundraising / Crowdfunding plugin build 5
+============
+* Popular projects
+* Newsfeed notifications added
+
+Oct 21, 2013 - Fundraising / Crowdfunding plugin build 4
+============
+* Major update
+* Crowdfunding feature added
+
+Aug 19, 2011 - Fundraising / Crowdfunding plugin build 1
+============
+Plugin initial release

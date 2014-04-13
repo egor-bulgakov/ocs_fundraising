@@ -11,19 +11,21 @@
 <form method="post">
 <table class="ow_table_2">
     <tr>
+        <th></th>
         <th>{text key='ocsfundraising+name'}, {text key='ocsfundraising+description'}</th>
         <th>{text key='ocsfundraising+target_amount'}, {$currency}</th>
         <th>{text key='ocsfundraising+current_amount'}, {$currency}</th>
         <th>%</th>
         <th>{text key='ocsfundraising+end_date'}</th>
         <th>{text key='ocsfundraising+status'}</th>
-        <td></td>
+        <th></th>
     </tr>
     {foreach from=$list item='goal'}
     {capture assign='goalId'}{$goal->id}{/capture}
     <tr class="ow_alt{cycle values='1,2'}">
+        <td><input type="checkbox" class="project_checkbox" data-gid="{$goal->id}" /></td>
         <td class="ow_txtleft">
-            <b>{$goal->name}</b><p class="ow_small">{$goal->description}</p>
+            <b>{$goal->name}</b><div class="ow_small" style="width: 400px;">{$goal->description}</div>
             {if $donations[$goalId]}<a class="ow_small" href="{url_for_route for="ocsfundraising.admin_donations:[goalId=>`$goal->id`]"}">{text key='ocsfundraising+view_donations'} ({$donations[$goalId]})</a>{/if}
         </td>
         <td>{$goal->amountTarget}</td>
@@ -34,11 +36,14 @@
             <span style="padding: 0 2px 2px" class="ow_small ow_mild_{if $goal->status=='active'}green{else}red{/if}">{text key="ocsfundraising+status_`$goal->status`"}</span>
         </td>
         <td>
-            <a class="ow_lbutton ocs_goal_edit" data-gid="{$goal->id}" href="javascript://">{text key='base+edit'}</a><br /><br />
-            <a class="ow_lbutton ow_red ocs_goal_delete" data-gid="{$goal->id}" href="javascript://">{text key='admin+delete'}</a>
+            <a class="ow_lbutton ocs_goal_edit" data-gid="{$goal->id}" href="javascript://">{text key='base+edit'}</a>
         </td>
     </tr>
     {/foreach}
+    {if $list}<tr><td colspan="8" class="ow_txtleft">
+    {text key='base+with_selected'}
+    {decorator name='button_list_item' langLabel='admin+delete' id='btn-delete-selected' class='ow_red'}
+    </td></tr>{/if}
 </table>
 </form>
 {else}

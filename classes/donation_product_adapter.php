@@ -44,13 +44,22 @@ class OCSFUNDRAISING_CLASS_DonationProductAdapter implements OW_BillingProductAd
             return false;
         }
 
-        $extra = $sale->getExtraData();
+        $extra = (array)$sale->getExtraData();
         $donation = new OCSFUNDRAISING_BOL_Donation();
         $donation->amount = $sale->totalAmount;
         $donation->userId = !empty($sale->userId) ? $sale->userId : null;
         $donation->donationStamp = time();
         $donation->goalId = $sale->entityId;
-        $donation->username = !empty($extra['username']) ? $extra['username'] : null;
+        if ( !empty($extra['username']) )
+        {
+            $donation->username = $extra['username'];
+            $donation->anonymous = false;
+        }
+        else
+        {
+            $donation->username = null;
+            $donation->anonymous = !empty($extra['anonymous']) ? $extra['anonymous'] : false;
+        }
         
         $service->registerDonation($donation);
         

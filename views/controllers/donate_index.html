@@ -1,23 +1,41 @@
-
-<div class="ow_wide ow_automargin">
-{block_decorator name='box_cap' langLabel='ocsfundraising+donate_label' iconClass='ow_ic_ok'}{/block_decorator}
-
-{block_decorator name='box'}
+{style}
+{literal}
+    .ow_billing_gateways img { margin: 7px;}
+{/literal}
+{/style}
+<div class="ow_superwide ow_automargin">
+{block_decorator name='box' langLabel='ocsfundraising+donate_label' iconClass='ow_ic_ok'}
     {form name='donate-form'}
-    <div class="ow_small ow_smallmargin">{$goal.dto->description}</div>
-    {if !$userId}
-    <div class="ow_smallmargin ow_center">
-        {text key='ocsfundraising+your_name'}: {input name='username' style='width: 140px'}
-    </div>
-    {/if}
-    <div class="ow_smallmargin ow_center">
-        {text key='ocsfundraising+amount'}:
-        <b>{$currency}</b> {input name='amount' style='width: 100px'}
-    </div>
-    <div class="ow_center">
-        <div class="ow_smallmargin">{input name='gateway'}</div>
-        {submit name='donate'}
-    </div>
+    <table class="ow_table_3">
+        {*<tr>
+            <td class="ow_label">{text key='ocsfundraising+view_page_desc_block'}</td>
+            <td class="ow_value">
+                <div style="width: 450px;" class="ow_small ow_smallmargin">{$goal.dto->description}</div>
+            </td>
+        </tr>*}
+        <tr>
+            <td class="ow_label" style="width: 25%">{text key='ocsfundraising+amount'}</td>
+            <td class="ow_value" style="width: 75%">
+                <b>{$currency}</b> {input name='amount' style='width: 100px'} {error name='amount'}
+            </td>
+        </tr>
+        {if !$userId}
+        <tr>
+            <td class="ow_label">{text key='ocsfundraising+your_name'}</td>
+            <td class="ow_value">{input name='username' style='width: 140px'}</td>
+        </tr>
+        {else}
+        <tr>
+            <td class="ow_label">{text key='ocsfundraising+donate_anonymously'}</td>
+            <td class="ow_value">{input name='anonymous'}</td>
+        </tr>
+        {/if}
+        <tr>
+            <td class="ow_label"></td>
+            <td class="ow_value"><div style="width: 75%">{input name='gateway'}</div></td>
+        </tr>
+    </table>
+    <div class="ow_center">{submit name='donate'}</div>
     {/form}
 {/block_decorator}
 </div>

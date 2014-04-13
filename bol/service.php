@@ -433,7 +433,7 @@ final class OCSFUNDRAISING_BOL_Service
      * @param int $limit
      * @return array|bool
      */
-    public function getDonationList( $goalId, $type, $page = 1, $limit = 3 )
+    public function getDonationList( $goalId, $type, $page = 1, $limit = 3, $adminMode = false )
     {
     	if ( !$goalId ) { return false; }
     	
@@ -471,6 +471,7 @@ final class OCSFUNDRAISING_BOL_Service
         $userNames = $userService->getUserNamesForList($userIdList);
 
         $res = array();
+        $anonymous = OW::getLanguage()->text('ocsfundraising', 'anonymous');
         foreach ( $list as $donation )
         {
             $donation->donationStamp = UTIL_DateTime::formatDate($donation->donationStamp, false);
@@ -478,15 +479,15 @@ final class OCSFUNDRAISING_BOL_Service
             $res[$donation->id]['dto'] = $donation;
             if ( $donation->userId )
             {
-                $res[$donation->id]['avatar'] = !empty($avatars[$donation->userId]) ? $avatars[$donation->userId] : $defAvatar;
-                $res[$donation->id]['username'] = !empty($userNames[$donation->userId]) ? $userNames[$donation->userId] : $userService->getUserName($donation->userId);
-                $res[$donation->id]['displayName'] = !empty($displayNames[$donation->userId]) ? $displayNames[$donation->userId] : $userService->getDisplayName($donation->userId);
+                $res[$donation->id]['avatar'] = $donation->anonymous && !$adminMode ? $defAvatar : (!empty($avatars[$donation->userId]) ? $avatars[$donation->userId] : $defAvatar);
+                $res[$donation->id]['username'] = $donation->anonymous && !$adminMode ? null : (!empty($userNames[$donation->userId]) ? $userNames[$donation->userId] : $userService->getUserName($donation->userId));
+                $res[$donation->id]['displayName'] = $donation->anonymous && !$adminMode ? $anonymous : (!empty($displayNames[$donation->userId]) ? $displayNames[$donation->userId] : $userService->getDisplayName($donation->userId));
             }
             else 
             {
                 $res[$donation->id]['avatar'] = $defAvatar;
                 $res[$donation->id]['username'] = $donation->username;
-                $res[$donation->id]['displayName'] = $donation->username;
+                $res[$donation->id]['displayName'] = $donation->username ? $donation->username : $anonymous;
             }
         }
         

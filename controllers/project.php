@@ -334,7 +334,9 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
         OW::getDocument()->addOnloadScript($script);
 
         $this->setPageHeading($project['dto']->name);
-        $this->setPageTitle($project['dto']->name);
+        $this->setPageTitle($lang->text('ocsfundraising', 'page_meta_title', array('name' => strip_tags(($project['dto']->name)))));
+        OW::getDocument()->setDescription(UTIL_String::truncate(strip_tags($project['dto']->description), 100, '...'));
+
         OW::getNavigation()->activateMenuItem(OW_Navigation::MAIN, 'ocsfundraising', 'projects');
     }
 

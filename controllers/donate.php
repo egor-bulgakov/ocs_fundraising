@@ -66,10 +66,19 @@ class OCSFUNDRAISING_CTRL_Donate extends OW_ActionController
 	        $sale->price = floatval($values['amount']);
 	        $sale->userId = $userId ? $userId : 0;
 	        $sale->recurring = false;
+
+            $extra = array();
+
 	        if ( !$userId && !empty($values['username']) )
 	        {
-	           $sale->setExtraData(array('username' => $values['username']));
+	            $extra['username'] = $values['username'];
 	        }
+            if ( $values['anonymous'] )
+            {
+                $extra['anonymous'] = $values['anonymous'];
+            }
+
+            $sale->setExtraData($extra);
 	
 	        $saleId = $billingService->initSale($sale, $values['gateway']['key']);
 	
@@ -107,8 +116,12 @@ class DonateForm extends Form
         if ( !$userId )
         {
         	$username = new TextField('username');
-        	$username->setRequired(true);
         	$this->addElement($username);
+        }
+        else
+        {
+            $anonymous = new CheckboxField('anonymous');
+            $this->addElement($anonymous);
         }
 
         $gatewaysField = new BillingGatewaySelectionField('gateway');
