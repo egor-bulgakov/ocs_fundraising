@@ -25,7 +25,7 @@ class OCSFUNDRAISING_CTRL_Admin extends ADMIN_CTRL_Abstract
     	$lang = OW::getLanguage();
         $service = OCSFUNDRAISING_BOL_Service::getInstance();
     	
-        $form = new FormAddGoal();
+        $form = new OCSFUNDRAISING_CLASS_GoalAddForm();
         $this->addForm($form);
         
         $list = $service->getGoalsList();
@@ -225,6 +225,31 @@ $("#btn-delete-selected").click(function(){
 
         OW::getDocument()->addOnloadScript($script);
     }
+
+    public function settings()
+    {
+        $lang = OW::getLanguage();
+        $service = OCSFUNDRAISING_BOL_Service::getInstance();
+        $config = OW::getConfig();
+
+        $form = new OCSFUNDRAISING_CLASS_SettingsForm();
+        $this->addForm($form);
+
+        if ( OW::getRequest()->isPost() && $form->isValid($_POST) )
+        {
+            $values = $form->getValues();
+            $config->saveConfig('ocsfundraising', 'allow_paypal', $values['allow_paypal']);
+
+            OW::getFeedback()->info($lang->text('ocsfundraising', 'settings_updated'));
+            $this->redirect();
+        }
+
+        $form->getElement('allow_paypal')->setValue($config->getValue('ocsfundraising', 'allow_paypal'));
+
+        $this->addComponent('menu', $this->getMenu());
+
+        $this->setPageHeading($lang->text('ocsfundraising', 'page_heading_admin'));
+    }
     
     public function editGoal( )
     {
@@ -245,6 +270,7 @@ $("#btn-delete-selected").click(function(){
             $goal['dto']->categoryId = $_POST['category'];
             $goal['dto']->ownerType = 'admin';
             $goal['dto']->ownerId = OW::getUser()->getId();
+            $goal['dto']->endOnFulfill = isset($_POST['fulfill']) && $_POST['fulfill'] == 'on';
             if ( !empty($_POST['month_end']) && !empty($_POST['day_end']) && !empty($_POST['year_end']) )
             {
                 $goal['dto']->endStamp = mktime(0, 0, 0, $_POST['month_end'], $_POST['day_end'], $_POST['year_end']);
@@ -372,70 +398,15 @@ $("#btn-delete-selected").click(function(){
         $item->setOrder(1);
         $items[] = $item;
 
+        $item = new BASE_MenuItem();
+        $item->setLabel($lang->text('ocsfundraising', 'settings'));
+        $item->setUrl($router->urlForRoute('ocsfundraising.admin_settings'));
+        $item->setIconClass('ow_ic_gear_wheel');
+        $item->setOrder(2);
+        $items[] = $item;
+
         $cmp = new BASE_CMP_ContentMenu($items);
 
         return $cmp;
     }
-}
-
-class FormAddGoal extends Form 
-{
-	public function __construct()
-	{
-		parent::__construct('form-add-goal');
-
-        $this->setEnctype(Form::ENCTYPE_MULTYPART_FORMDATA);
-		
-		$lang = OW::getLanguage();
-		
-		$name = new TextField('name');
-		$name->setRequired(true);
-		$name->setLabel($lang->text('ocsfundraising', 'name'));
-		$this->addElement($name);
-
-        $btnSet = array(BOL_TextFormatService::WS_BTN_IMAGE, BOL_TextFormatService::WS_BTN_VIDEO, BOL_TextFormatService::WS_BTN_HTML);
-        $desc = new WysiwygTextarea('description', $btnSet);
-        $desc->setRequired(true);
-        $sValidator = new StringValidator(1, 50000);
-        $desc->addValidator($sValidator);
-        $desc->setLabel($lang->text('ocsfundraising', 'description'));
-        $this->addElement($desc);
-
-        $category = new Selectbox('category');
-        $category->setLabel($lang->text('ocsfundraising', 'category'));
-        $list = OCSFUNDRAISING_BOL_Service::getInstance()->getCategoryList();
-        if ( $list )
-        {
-            foreach ( $list as $cat )
-            {
-                $category->addOption($cat->id, $lang->text('ocsfundraising', 'category_'.$cat->id));
-            }
-        }
-        $this->addElement($category);
-		
-		$target = new TextField('target');
-		$target->setRequired(true);
-		$target->setLabel($lang->text('ocsfundraising', 'target_amount'));
-		$this->addElement($target);
-		
-		$min = new TextField('min');
-		$min->setLabel($lang->text('ocsfundraising', 'min_amount'));
-		$min->setValue(1);
-		$this->addElement($min);
-		
-		$end = new DateField('end');
-		$end->setMinYear(date('Y'));
-		$end->setMaxYear(date('Y') + 2);
-		
-		$end->setLabel($lang->text('ocsfundraising', 'end_date'));
-		$this->addElement($end);
-
-        $imageField = new FileField('image');
-        $imageField->setLabel($lang->text('ocsfundraising', 'image_label'));
-        $this->addElement($imageField);
-		
-		$submit = new Submit('add');
-		$submit->setLabel($lang->text('ocsfunraising', 'add'));
-		$this->addElement($submit);
-	}
 }

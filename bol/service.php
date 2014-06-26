@@ -290,54 +290,11 @@ final class OCSFUNDRAISING_BOL_Service
     }
 
     /**
-     * @param $status
-     * @param $page
-     * @param $limit
-     * @param null $categoryId
+     * @param $list
      * @return array
      */
-    public function getGoalListWithStatus( $status, $page, $limit, $categoryId = null )
+    public function prepareListData( $list )
     {
-        $list = $this->goalDao->findGoalsWithStatus($status, $page, $limit, $categoryId);
-
-        $result = array();
-        if ( $list )
-        {
-            $userIdList = array();
-            foreach ( $list as $goal )
-            {
-                if ( !in_array($goal->ownerId, $userIdList) )
-                {
-                    $userIdList[] = $goal->ownerId;
-                }
-            }
-
-            $userUrlList = BOL_UserService::getInstance()->getUserUrlsForList($userIdList);
-            $userDisplayNames = BOL_UserService::getInstance()->getDisplayNamesForList($userIdList);
-
-            $router = OW::getRouter();
-
-            foreach ( $list as $goal )
-            {
-                $goal->description = mb_substr($goal->description, 0, 120);
-                $result[$goal->id]['dto'] = $goal;
-                $result[$goal->id]['imageSrc'] = $goal->image ? $this->generateImageUrl($goal->image, true) : $this->generateDefaultImageUrl();
-                $result[$goal->id]['url'] = $router->urlForRoute('ocsfundraising.project', array('id' => $goal->id));
-                $result[$goal->id]['userUrl'] = !empty($userUrlList[$goal->ownerId]) ? $userUrlList[$goal->ownerId] : null;
-                $result[$goal->id]['name'] = !empty($userDisplayNames[$goal->ownerId]) ? $userDisplayNames[$goal->ownerId] : null;
-                $result[$goal->id]['categoryUrl'] = $goal->categoryId ? $router->urlForRoute('ocsfundraising.category', array('id' => $goal->categoryId)) : null;
-                $result[$goal->id]['days'] = $goal->endStamp && ($goal->endStamp > time()) ? ceil(($goal->endStamp - time()) / 3600 / 24) : null;
-                $result[$goal->id]['percent'] = $goal->amountCurrent / $goal->amountTarget * 100;
-            }
-        }
-
-        return $result;
-    }
-
-    public function getPopularGoalList( $page, $limit )
-    {
-        $list = $this->goalDao->findPopularGoals($page, $limit);
-
         $result = array();
         if ( $list )
         {
@@ -374,12 +331,45 @@ final class OCSFUNDRAISING_BOL_Service
 
     /**
      * @param $status
+     * @param $page
+     * @param $limit
+     * @param null $categoryId
+     * @return array
+     */
+    public function getGoalListWithStatus( $status, $page, $limit, $categoryId = null )
+    {
+        $list = $this->goalDao->findGoalsWithStatus($status, $page, $limit, $categoryId);
+
+        return $this->prepareListData($list);
+    }
+
+    public function getUserGoalList( $userId, $page, $limit )
+    {
+        $list = $this->goalDao->findUserGoals($userId, $page, $limit);
+
+        return $this->prepareListData($list);
+    }
+
+    public function getPopularGoalList( $page, $limit )
+    {
+        $list = $this->goalDao->findPopularGoals($page, $limit);
+
+        return $this->prepareListData($list);
+    }
+
+    /**
+     * @param $status
      * @param null $categoryId
      * @return mixed|null|string
      */
     public function getGoalsWithStatusCount( $status, $categoryId = null )
     {
         return $this->goalDao->countGoalsWithStatus($status, $categoryId);
+    }
+
+    public function getUserGoalsCount( $userId )
+    {
+        return $this->goalDao->countUserGoals($userId);
     }
 
     public function getPopularGoalsCount()
@@ -397,33 +387,7 @@ final class OCSFUNDRAISING_BOL_Service
     {
         $list = $this->goalDao->findUserGoals($userId, $page, $limit);
 
-        $result = array();
-        if ( $list )
-        {
-            $userIdList = array();
-            foreach ( $list as $goal )
-            {
-                if ( !in_array($goal->ownerId, $userIdList) )
-                {
-                    $userIdList[] = $goal->ownerId;
-                }
-            }
-
-            $router = OW::getRouter();
-
-            foreach ( $list as $goal )
-            {
-                $goal->description = mb_substr($goal->description, 0, 160);
-                $result[$goal->id]['dto'] = $goal;
-                $result[$goal->id]['imageSrc'] = $goal->image ? $this->generateImageUrl($goal->image, true) : $this->generateDefaultImageUrl();
-                $result[$goal->id]['url'] = $router->urlForRoute('ocsfundraising.project', array('id' => $goal->id));
-                $result[$goal->id]['categoryUrl'] = $goal->categoryId ? $router->urlForRoute('ocsfundraising.category', array('id' => $goal->categoryId)) : null;
-                $result[$goal->id]['days'] = $goal->endStamp && ($goal->endStamp > time()) ? ceil(($goal->endStamp - time()) / 3600 / 24) : null;
-                $result[$goal->id]['percent'] = $goal->amountCurrent / $goal->amountTarget * 100;
-            }
-        }
-
-        return $result;
+        return $this->prepareListData($list);
     }
 
     /**
@@ -479,9 +443,9 @@ final class OCSFUNDRAISING_BOL_Service
             $res[$donation->id]['dto'] = $donation;
             if ( $donation->userId )
             {
-                $res[$donation->id]['avatar'] = $donation->anonymous && !$adminMode ? $defAvatar : (!empty($avatars[$donation->userId]) ? $avatars[$donation->userId] : $defAvatar);
-                $res[$donation->id]['username'] = $donation->anonymous && !$adminMode ? null : (!empty($userNames[$donation->userId]) ? $userNames[$donation->userId] : $userService->getUserName($donation->userId));
-                $res[$donation->id]['displayName'] = $donation->anonymous && !$adminMode ? $anonymous : (!empty($displayNames[$donation->userId]) ? $displayNames[$donation->userId] : $userService->getDisplayName($donation->userId));
+                $res[$donation->id]['avatar'] = $donation->privacy == 'anonymous' && !$adminMode ? $defAvatar : (!empty($avatars[$donation->userId]) ? $avatars[$donation->userId] : $defAvatar);
+                $res[$donation->id]['username'] = $donation->privacy == 'anonymous' && !$adminMode ? null : (!empty($userNames[$donation->userId]) ? $userNames[$donation->userId] : $userService->getUserName($donation->userId));
+                $res[$donation->id]['displayName'] = $donation->privacy == 'anonymous' && !$adminMode ? $anonymous : (!empty($displayNames[$donation->userId]) ? $displayNames[$donation->userId] : $userService->getDisplayName($donation->userId));
             }
             else 
             {
@@ -489,6 +453,8 @@ final class OCSFUNDRAISING_BOL_Service
                 $res[$donation->id]['username'] = $donation->username;
                 $res[$donation->id]['displayName'] = $donation->username ? $donation->username : $anonymous;
             }
+
+
         }
         
         return $res;

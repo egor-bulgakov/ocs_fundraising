@@ -71,7 +71,7 @@
 	    {capture assign='infoString'}
             {if $d.username}<a href="{url_for_route for="base_user_profile:[username=>`$d.username`]"}">{$d.displayName}</a>{else}{$d.displayName}{/if} <span class="ow_tiny">{$d.dto->donationStamp}</span>
 	    {/capture}
-	    {capture assign='content'}<span class="ow_remark ow_small">{text key='ocsfundraising+amount'}: <b>{$currency}{$d.dto->amount}</b></span>{/capture}
+	    {capture assign='content'}{if $d.dto->privacy == 'name_and_amount'}<span class="ow_remark ow_small">{text key='ocsfundraising+amount'}: <b>{$currency}{$d.dto->amount}</b></span>{/if}{/capture}
 	    <div class="ow_smallmargin">{decorator name='ipc' infoString=$infoString content=$content avatar=$d.avatar}</div>
 	{/foreach}    
 	</div>
@@ -84,7 +84,7 @@
         {capture assign='infoString'}
             {if $d.username}<a href="{url_for_route for="base_user_profile:[username=>`$d.username`]"}">{$d.displayName}</a>{else}{$d.displayName}{/if} <span class="ow_tiny">{$d.dto->donationStamp}</span>
         {/capture}
-        {capture assign='content'}<span class="ow_remark ow_small">{text key='ocsfundraising+amount'}: <b>{$currency}{$d.dto->amount}</b></span>{/capture}
+        {capture assign='content'}{if $d.dto->privacy == 'name_and_amount'}<span class="ow_remark ow_small">{text key='ocsfundraising+amount'}: <b>{$currency}{$d.dto->amount}</b></span>{/if}{/capture}
         <div class="ow_smallmargin">{decorator name='ipc' infoString=$infoString content=$content avatar=$d.avatar}</div>
     {/foreach}
 	</div>

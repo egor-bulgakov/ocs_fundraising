@@ -8,7 +8,7 @@
     <authorEmail>plugins@oxcandystore.com</authorEmail>
 	<authorUrl>http://oxcandystore.com</authorUrl>
     <developerKey>c36f83152f203c5a947a3fb053e4bc24</developerKey>
-    <build>8</build>
+    <build>9</build>
     <copyright>(C) 2012 Oxwall CandyStore</copyright>
 	<license>The BSD License</license>
     <licenseUrl>http://www.opensource.org/licenses/bsd-license.php</licenseUrl>

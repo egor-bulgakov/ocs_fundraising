@@ -53,12 +53,12 @@ class OCSFUNDRAISING_CLASS_DonationProductAdapter implements OW_BillingProductAd
         if ( !empty($extra['username']) )
         {
             $donation->username = $extra['username'];
-            $donation->anonymous = false;
+            $donation->privacy = 'name_and_amount';
         }
         else
         {
             $donation->username = null;
-            $donation->anonymous = !empty($extra['anonymous']) ? $extra['anonymous'] : false;
+            $donation->privacy = !empty($extra['privacy']) ? $extra['privacy'] : 'name_and_amount';
         }
         
         $service->registerDonation($donation);

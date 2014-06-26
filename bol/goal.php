@@ -65,4 +65,12 @@ class OCSFUNDRAISING_BOL_Goal extends OW_Entity
      * @var string
      */
     public $image = null;
+    /**
+     * @var bool
+     */
+    public $endOnFulfill = 0;
+    /**
+     * @var string
+     */
+    public $paypal = null;
 }

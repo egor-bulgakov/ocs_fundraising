@@ -60,6 +60,10 @@ class OCSFUNDRAISING_CLASS_GoalEditForm extends Form
         $imageField->setLabel($lang->text('ocsfundraising', 'image_label'));
         $this->addElement($imageField);
 
+        $endOnFulfill = new CheckboxField('fulfill');
+        $endOnFulfill->setLabel($lang->text('ocsfundraising', 'end_if_fulfilled'));
+        $this->addElement($endOnFulfill);
+
         $submit = new Submit('edit');
         $submit->setLabel($lang->text('ocsfundraising', 'edit'));
         $this->addElement($submit);

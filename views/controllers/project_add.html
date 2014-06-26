@@ -27,9 +27,18 @@
             <td class="ow_label">{label name='min'}</td>
             <td class="ow_value"><b>{$currency}</b> {input name='min' style='width: 88%'}</td>
         </tr>
+        {if $paypalAllowed}
+        <tr>
+            <td class="ow_label">{label name='paypal'}</td>
+            <td class="ow_value">{input name='paypal'} {error name='paypal'}</td>
+        </tr>
+        {/if}
         <tr>
             <td class="ow_label">{label name='end'}</td>
-            <td class="ow_value">{input name='end'}</td>
+            <td class="ow_value">
+                <div class="ow_smallmargin">{input name='end'}</div>
+                {input name='fulfill'} {label name='fulfill'}
+            </td>
         </tr>
     </table>
     <div class="ow_center">{submit name='add'}</div>

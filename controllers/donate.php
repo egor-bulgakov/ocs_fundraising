@@ -53,7 +53,9 @@ class OCSFUNDRAISING_CTRL_Donate extends OW_ActionController
 	            OW::getFeedback()->error($lang->text('base', 'billing_gateway_not_found'));
 	            $this->redirectToAction('index');
 	        }
-	        
+
+            $isOwnerPaypalMode = $values['gateway']['key'] == 'billingpaypal' && mb_strlen($goal['dto']->paypal);
+
 	        // create donation product adapter object
 	        $productAdapter = new OCSFUNDRAISING_CLASS_DonationProductAdapter();
 	        
@@ -73,9 +75,14 @@ class OCSFUNDRAISING_CTRL_Donate extends OW_ActionController
 	        {
 	            $extra['username'] = $values['username'];
 	        }
-            if ( $values['anonymous'] )
+            if ( $values['privacy'] )
             {
-                $extra['anonymous'] = $values['anonymous'];
+                $extra['privacy'] = $values['privacy'];
+            }
+
+            if ( $isOwnerPaypalMode )
+            {
+                $extra['business'] = $goal['dto']->paypal;
             }
 
             $sale->setExtraData($extra);
@@ -89,9 +96,16 @@ class OCSFUNDRAISING_CTRL_Donate extends OW_ActionController
 	            $billingService->setSessionBackUrl(
 	               OW::getRouter()->urlForRoute(OCSFUNDRAISING_CLASS_DonationProductAdapter::RETURN_ROUTE, array('goalId' => $goalId))
 	            );
-	
-	            // redirect to gateway form page 
-	            $this->redirect($values['gateway']['url']);
+
+                // redirect to gateway form page
+                if ( $isOwnerPaypalMode )
+                {
+                    $this->redirect(OW::getRouter()->urlForRoute('ocsfundraising.paypal_order_form'));
+                }
+	            else
+                {
+	                $this->redirect($values['gateway']['url']);
+                }
 	        }
         }
 
@@ -108,7 +122,9 @@ class DonateForm extends Form
     public function __construct( $userId )
     {
         parent::__construct('donate-form');
-        
+
+        $lang = OW::getLanguage();
+
         $amountField = new TextField('amount');
         $amountField->setRequired();
         $this->addElement($amountField);
@@ -120,8 +136,12 @@ class DonateForm extends Form
         }
         else
         {
-            $anonymous = new CheckboxField('anonymous');
-            $this->addElement($anonymous);
+            $privacy = new Selectbox('privacy');
+            $privacy->addOption('name_and_amount', $lang->text('ocsfundraising', 'privacy_name_and_amount'));
+            $privacy->addOption('just_name', $lang->text('ocsfundraising', 'privacy_just_name'));
+            $privacy->addOption('anonymous', $lang->text('ocsfundraising', 'privacy_anonymous'));
+            $privacy->setHasInvitation(false);
+            $this->addElement($privacy);
         }
 
         $gatewaysField = new BillingGatewaySelectionField('gateway');

@@ -57,6 +57,8 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
             $goal->ownerType = 'user';
             $goal->ownerId = OW::getUser()->getId();
             $goal->categoryId = (int) $values['category'];
+            $goal->endOnFulfill = (int) $values['fulfill'];
+            $goal->paypal = !empty($values['paypal']) ? trim($values['paypal']) : null;
 
             $imageValid = true;
             $imagePosted = false;
@@ -100,6 +102,7 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
         }
 
         $this->assign('currency', BOL_BillingService::getInstance()->getActiveCurrency());
+        $this->assign('paypalAllowed', OW::getConfig()->getValue('ocsfundraising', 'allow_paypal') && OW::getPluginManager()->isPluginActive('billingpaypal'));
 
         $this->setPageHeading($lang->text('ocsfundraising', 'add_project'));
     }
@@ -130,6 +133,59 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
         OW::getDocument()->addOnloadScript($script);
 
         $this->setPageHeading($lang->text('ocsfundraising', 'crowdfunding_projects'));
+    }
+
+    public function userProjects( array $params )
+    {
+        if ( empty($params['username']) )
+        {
+            throw new Redirect404Exception();
+        }
+
+        $username = trim($params['username']);
+
+        $user = BOL_UserService::getInstance()->findByUsername($username);
+        if ( !$user )
+        {
+            throw new Redirect404Exception();
+        }
+
+        $service = OCSFUNDRAISING_BOL_Service::getInstance();
+        $lang = OW::getLanguage();
+
+        $page = !empty($_GET['page']) && (int) $_GET['page'] ? abs((int) $_GET['page']) : 1;
+        $limit = 9;
+        $list = $service->getUserGoalList($user->id, $page, $limit);
+        $this->assign('list', $list);
+
+        $total = $service->getUserGoalsCount($user->id);
+        $pages = (int) ceil($total / $limit);
+        $paging = new BASE_CMP_Paging($page, $pages, $limit);
+        $this->assign('paging', $paging->render());
+
+        $this->addComponent('categories', new OCSFUNDRAISING_CMP_Categories());
+        $this->addComponent('menu', $this->getMenu());
+
+        $this->assign('canAdd', OW::getUser()->isAuthorized('ocsfundraising', 'add_goal'));
+
+        $script = '$("#btn-add-project").click(function(){
+            document.location.href = '.json_encode(OW::getRouter()->urlForRoute('ocsfundraising.add_goal')).';
+        });';
+        OW::getDocument()->addOnloadScript($script);
+
+        if ( OW::getUser()->getId() == $user->id )
+        {
+            $this->setPageHeading($lang->text('ocsfundraising', 'my_projects'));
+        }
+        else
+        {
+            $displayName = BOL_UserService::getInstance()->getDisplayName($user->id);
+            $this->setPageHeading($lang->text('ocsfundraising', 'user_projects', array('user' => $displayName)));
+        }
+
+        $this->setTemplate(
+            OW::getPluginManager()->getPlugin('ocsfundraising')->getCtrlViewDir() . 'project_projects.html'
+        );
     }
 
     public function category( array $params )
@@ -391,6 +447,7 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
                 $goal->endStamp = mktime(0, 0, 0, $date[1], $date[2], $date[0]);
             }
             $goal->categoryId = (int) $values['category'];
+            $goal->endOnFulfill = (int) $values['fulfill'];
 
             $imageValid = true;
             $imagePosted = false;
@@ -425,6 +482,7 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
         $form->getElement('target')->setValue($goal['dto']->amountTarget);
         $form->getElement('min')->setValue(floatval($goal['dto']->amountMin));
         $form->getElement('category')->setValue(floatval($goal['dto']->categoryId));
+        $form->getElement('fulfill')->setValue($goal['dto']->endOnFulfill);
         if ( $goal['dto']->endStamp )
         {
             $date = date('Y/m/d', $goal['dto']->endStamp);

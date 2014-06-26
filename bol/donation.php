@@ -41,4 +41,8 @@ class OCSFUNDRAISING_BOL_Donation extends OW_Entity
      * @var int
      */
     public $anonymous = 0;
+    /**
+     * @var string
+     */
+    public $privacy = 'name_and_amount';
 }

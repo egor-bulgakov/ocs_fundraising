@@ -68,7 +68,7 @@ class OCSFUNDRAISING_BOL_GoalDao extends OW_BaseDao
     public function checkComplete()
     {
     	$sql = "UPDATE `".$this->getTableName()."` SET `status` = 'complete'
-    	   WHERE `endStamp` IS NOT NULL AND `endStamp` < :time";
+    	   WHERE `endStamp` IS NOT NULL AND (`endStamp` < :time OR `endOnFulfill` = 1 AND `amountCurrent` >= `amountTarget`)";
     	
     	$this->dbo->query($sql, array('time' => time()));
     }
@@ -136,6 +136,15 @@ class OCSFUNDRAISING_BOL_GoalDao extends OW_BaseDao
         $example->setLimitClause($start, $limit);
 
         return $this->findListByExample($example);
+    }
+
+    public function countUserGoals( $userId )
+    {
+        $example = new OW_Example();
+        $example->andFieldEqual('status', 'active');
+        $example->andFieldEqual('ownerId', $userId);
+
+        return $this->countByExample($example);
     }
 
     public function getCategoriesCount()

@@ -23,7 +23,7 @@ $sql = "CREATE TABLE IF NOT EXISTS `".OW_DB_PREFIX."ocsfundraising_donation` (
 `username` varchar( 100 ) DEFAULT NULL ,
 `amount` float( 9, 2 ) NOT NULL ,
 `donationStamp` int( 11 ) NOT NULL DEFAULT '0',
-`anonymous` TINYINT( 1 ) NULL DEFAULT '0',
+`privacy` VARCHAR( 20 ) NULL DEFAULT 'name_and_amount',
 PRIMARY KEY ( `id` )
 ) ENGINE = MYISAM DEFAULT CHARSET = utf8;";
 
@@ -43,6 +43,8 @@ $sql = "CREATE TABLE IF NOT EXISTS `".OW_DB_PREFIX."ocsfundraising_goal` (
   `ownerId` INT NULL DEFAULT NULL,
   `image` VARCHAR( 50 ) NULL DEFAULT NULL,
   `categoryId` INT NULL DEFAULT NULL,
+  `endOnFulfill` TINYINT(1) NOT NULL DEFAULT '0',
+  `paypal` VARCHAR( 50 ) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;";
 
@@ -55,6 +57,12 @@ $sql = "CREATE TABLE IF NOT EXISTS `".OW_DB_PREFIX."ocsfundraising_category` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;";
 
 OW::getDbo()->query($sql);
+
+$config = OW::getConfig();
+if ( !$config->configExists('ocsfundraising', 'allow_paypal') )
+{
+    $config->addConfig('ocsfundraising', 'allow_paypal', 1, 'Allow collecting funds via PayPal');
+}
 
 try {
     $product = new BOL_BillingProduct();

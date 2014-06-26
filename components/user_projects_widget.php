@@ -28,12 +28,12 @@ class OCSFUNDRAISING_CMP_UserProjectsWidget extends BASE_CLASS_Widget
 
         $this->assign('currency', BOL_BillingService::getInstance()->getActiveCurrency());
 
-        /*$js = UTIL_JsGenerator::newInstance()
-            ->jQueryEvent('.btn-donate-goal-'.$goal['dto']->id, 'click', 'document.location.href = e.data.href', array('e'),
-                array('href' => OW::getRouter()->urlForRoute('ocsfundraising.donate', array('goalId' => $goal['dto']->id))
-            ));
+        $username = BOL_UserService::getInstance()->getUserName($userId);
 
-        OW::getDocument()->addOnloadScript($js);*/
+        $this->setSettingValue(self::SETTING_TOOLBAR, array(array(
+            'label' => OW::getLanguage()->text('base', 'view_all'),
+            'href' => OW::getRouter()->urlForRoute('ocsfundraising.user_list', array('username' => $username))
+        )));
     }
 
     public static function getStandardSettingValueList()

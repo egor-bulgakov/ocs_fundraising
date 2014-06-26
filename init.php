@@ -57,6 +57,10 @@ OW::getRouter()->addRoute(
 );
 
 OW::getRouter()->addRoute(
+    new OW_Route('ocsfundraising.user_list', '/crowdfunding/projects/user/:username', 'OCSFUNDRAISING_CTRL_Project', 'userProjects')
+);
+
+OW::getRouter()->addRoute(
     new OW_Route('ocsfundraising.category', '/crowdfunding/category/:id', 'OCSFUNDRAISING_CTRL_Project', 'category')
 );
 
@@ -70,6 +74,15 @@ OW::getRouter()->addRoute(
 
 OW::getRouter()->addRoute(
     new OW_Route('ocsfundraising.action_reorder', 'admin/plugins/ocsfundraising/ajax/reorder', 'OCSFUNDRAISING_CTRL_Admin', 'ajaxReorder')
+);
+
+// PayPal routes
+OW::getRouter()->addRoute(
+    new OW_Route('ocsfundraising.paypal_order_form', '/crowdfunding/billing-paypal/order', 'OCSFUNDRAISING_CTRL_Paypal', 'form')
+);
+
+OW::getRouter()->addRoute(
+    new OW_Route('ocsfundraising.paypal_notify', '/crowdfunding/billing-paypal/order/notify', 'OCSFUNDRAISING_CTRL_Paypal', 'notify')
 );
 
 OCSFUNDRAISING_CLASS_EventHandler::getInstance()->init();

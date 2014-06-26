@@ -45,6 +45,14 @@ class OCSFUNDRAISING_CLASS_GoalAddForm extends Form
         $min->setValue(1);
         $this->addElement($min);
 
+        if ( OW::getConfig()->getValue('ocsfundraising', 'allow_paypal') && OW::getPluginManager()->isPluginActive('billingpaypal') )
+        {
+            $paypal = new TextField('paypal');
+            $paypal->addValidator(new EmailValidator());
+            $paypal->setLabel($lang->text('ocsfundraising', 'your_paypal_email'));
+            $this->addElement($paypal);
+        }
+
         $end = new DateField('end');
         $end->setMinYear(date('Y'));
         $end->setMaxYear(date('Y') + 2);
@@ -55,6 +63,10 @@ class OCSFUNDRAISING_CLASS_GoalAddForm extends Form
         $imageField = new FileField('image');
         $imageField->setLabel($lang->text('ocsfundraising', 'image_label'));
         $this->addElement($imageField);
+
+        $endOnFulfill = new CheckboxField('fulfill');
+        $endOnFulfill->setLabel($lang->text('ocsfundraising', 'end_if_fulfilled'));
+        $this->addElement($endOnFulfill);
 
         $submit = new Submit('add');
         $submit->setLabel($lang->text('ocsfundraising', 'add'));

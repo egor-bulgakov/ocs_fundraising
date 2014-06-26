@@ -37,6 +37,7 @@ class OCSFUNDRAISING_CMP_GoalEdit extends OW_Component
         $form->getElement('current')->setValue($goal['dto']->amountCurrent);
         $form->getElement('min')->setValue(floatval($goal['dto']->amountMin));
         $form->getElement('category')->setValue(floatval($goal['dto']->categoryId));
+        $form->getElement('fulfill')->setValue($goal['dto']->endOnFulfill);
         if ( $goal['dto']->endStamp )
         {
 	        $date = date('Y/m/d', $goal['dto']->endStamp);
@@ -114,6 +115,10 @@ class EditGoalForm extends Form
         $imageField = new FileField('image');
         $imageField->setLabel($lang->text('ocsfundraising', 'image_label'));
         $this->addElement($imageField);
+
+        $endOnFulfill = new CheckboxField('fulfill');
+        $endOnFulfill->setLabel($lang->text('ocsfundraising', 'end_if_fulfilled'));
+        $this->addElement($endOnFulfill);
         
         $submit = new Submit('update');
         $submit->setLabel($lang->text('base', 'save'));
