@@ -30,10 +30,13 @@ class OCSFUNDRAISING_CMP_UserProjectsWidget extends BASE_CLASS_Widget
 
         $username = BOL_UserService::getInstance()->getUserName($userId);
 
-        $this->setSettingValue(self::SETTING_TOOLBAR, array(array(
-            'label' => OW::getLanguage()->text('base', 'view_all'),
-            'href' => OW::getRouter()->urlForRoute('ocsfundraising.user_list', array('username' => $username))
-        )));
+        if ( $projects )
+        {
+            $this->setSettingValue(self::SETTING_TOOLBAR, array(array(
+                'label' => OW::getLanguage()->text('base', 'view_all'),
+                'href' => OW::getRouter()->urlForRoute('ocsfundraising.user_list', array('username' => $username))
+            )));
+        }
     }
 
     public static function getStandardSettingValueList()

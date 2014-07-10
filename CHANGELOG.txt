@@ -1,3 +1,12 @@
+Jul 10, 2014 - - Fundraising / Crowdfunding plugin build 9
+============
+* Oxwall 1.7 support added
+* Donation privacy implemented
+* Added option to end crowdfunding project when the target amount is fulfilled
+* Code refactoring
+* Added option for users to collect payments through PayPal (PayPal Billing plugin required)
+* Added page with all projects started by a user
+
 Apr 13, 2014 - Fundraising / Crowdfunding plugin build 8
 ============
 * Projects bulk delete action in admin panel

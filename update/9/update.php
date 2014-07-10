@@ -68,7 +68,7 @@ $config = Updater::getConfigService();
 
 if ( !$config->configExists('ocsfundraising', 'allow_paypal') )
 {
-    $config->addConfig('ocsfundraising', 'allow_paypal', 1, 'Allow collecting funds via PayPal');
+    $config->addConfig('ocsfundraising', 'allow_paypal', 0, 'Allow collecting funds via PayPal');
 }
 
 Updater::getLanguageService()->importPrefixFromZip(dirname(__FILE__).DS.'langs.zip', 'ocsfundraising');

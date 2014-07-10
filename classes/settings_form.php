@@ -13,9 +13,8 @@
  *
  * @author Oxwall CandyStore <plugins@oxcandystore.com>
  * @package ow.ow_plugins.ocs_fundraising.classes
- * @since 1.6.0
+ * @since 1.7.0
  */
-
 class OCSFUNDRAISING_CLASS_SettingsForm extends Form
 {
     public function __construct()

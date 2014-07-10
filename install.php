@@ -61,7 +61,7 @@ OW::getDbo()->query($sql);
 $config = OW::getConfig();
 if ( !$config->configExists('ocsfundraising', 'allow_paypal') )
 {
-    $config->addConfig('ocsfundraising', 'allow_paypal', 1, 'Allow collecting funds via PayPal');
+    $config->addConfig('ocsfundraising', 'allow_paypal', 0, 'Allow collecting funds via PayPal');
 }
 
 try {

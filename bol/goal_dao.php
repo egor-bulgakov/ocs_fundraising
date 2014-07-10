@@ -73,6 +73,13 @@ class OCSFUNDRAISING_BOL_GoalDao extends OW_BaseDao
     	$this->dbo->query($sql, array('time' => time()));
     }
 
+    /**
+     * @param $status
+     * @param $page
+     * @param $limit
+     * @param $categoryId
+     * @return array|mixed
+     */
     public function findGoalsWithStatus( $status, $page, $limit, $categoryId )
     {
         $start = ($page - 1) * $limit;
@@ -89,6 +96,11 @@ class OCSFUNDRAISING_BOL_GoalDao extends OW_BaseDao
         return $this->findListByExample($example);
     }
 
+    /**
+     * @param $page
+     * @param $limit
+     * @return array|mixed
+     */
     public function findPopularGoals( $page, $limit )
     {
         $start = ($page - 1) * $limit;
@@ -103,6 +115,11 @@ class OCSFUNDRAISING_BOL_GoalDao extends OW_BaseDao
         return $this->dbo->queryForObjectList($sql, self::getDtoClassName(), array('start' => $start, 'limit' => $limit));
     }
 
+    /**
+     * @param $status
+     * @param $categoryId
+     * @return int
+     */
     public function countGoalsWithStatus( $status, $categoryId )
     {
         $example = new OW_Example();
@@ -115,6 +132,9 @@ class OCSFUNDRAISING_BOL_GoalDao extends OW_BaseDao
         return $this->countByExample($example);
     }
 
+    /**
+     * @return int
+     */
     public function countPopularGoals()
     {
         $sql = "SELECT COUNT(*) FROM `".$this->getTableName()."` AS `g`
@@ -125,6 +145,12 @@ class OCSFUNDRAISING_BOL_GoalDao extends OW_BaseDao
         return $this->dbo->queryForColumn($sql);
     }
 
+    /**
+     * @param $userId
+     * @param $page
+     * @param $limit
+     * @return array
+     */
     public function findUserGoals( $userId, $page, $limit )
     {
         $start = ($page - 1) * $limit;
@@ -138,6 +164,10 @@ class OCSFUNDRAISING_BOL_GoalDao extends OW_BaseDao
         return $this->findListByExample($example);
     }
 
+    /**
+     * @param $userId
+     * @return int
+     */
     public function countUserGoals( $userId )
     {
         $example = new OW_Example();
@@ -147,6 +177,9 @@ class OCSFUNDRAISING_BOL_GoalDao extends OW_BaseDao
         return $this->countByExample($example);
     }
 
+    /**
+     * @return array
+     */
     public function getCategoriesCount()
     {
         $sql = "SELECT `status`, `categoryId`, COUNT(*) AS `count` FROM `".$this->getTableName()."`
@@ -156,6 +189,9 @@ class OCSFUNDRAISING_BOL_GoalDao extends OW_BaseDao
         return $this->dbo->queryForList($sql);
     }
 
+    /**
+     * @param $categoryId
+     */
     public function unsetCategory( $categoryId )
     {
         $sql = "UPDATE `".$this->getTableName()."` set `categoryId` = null WHERE `categoryId` = :id";

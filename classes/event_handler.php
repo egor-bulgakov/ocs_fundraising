@@ -47,16 +47,34 @@ class OCSFUNDRAISING_CLASS_EventHandler
 
     public function addNewContentItem( BASE_CLASS_EventCollector $event )
     {
-        if ( !OW::getUser()->isAuthorized('ocsfundraising', 'add_goal') )
-        {
-            return;
-        }
-
         $resultArray = array(
             BASE_CMP_AddNewContent::DATA_KEY_ICON_CLASS => 'ow_ic_files',
             BASE_CMP_AddNewContent::DATA_KEY_URL => OW::getRouter()->urlForRoute('ocsfundraising.add_goal'),
             BASE_CMP_AddNewContent::DATA_KEY_LABEL => OW::getLanguage()->text('ocsfundraising', 'crowdfunding')
         );
+
+        if ( !OW::getUser()->isAuthorized('ocsfundraising', 'add_goal') )
+        {
+            try
+            {
+                $status = BOL_AuthorizationService::getInstance()->getActionStatus('ocsfundraising', 'add_goal');
+
+                if ( $status['status'] != BOL_AuthorizationService::STATUS_PROMOTED )
+                {
+                    return;
+                }
+
+                $id = uniqid('add-goal-');
+                $resultArray[BASE_CMP_AddNewContent::DATA_KEY_ID] = $id;
+
+                $script = '$("#'.$id.'").click(function(){
+                    OW.authorizationLimitedFloatbox('.json_encode($status['msg']).');
+                    return false;
+                });';
+                OW::getDocument()->addOnloadScript($script);
+            }
+            catch ( Exception $e ) { }
+        }
 
         $event->add($resultArray);
     }
@@ -97,8 +115,8 @@ class OCSFUNDRAISING_CLASS_EventHandler
         $content = array(
             "format" => "image_content",
             "vars" => array(
-                "image" => $project['dto']->image ? $service->generateImageUrl($project['dto']->image, false) : null,
-                "thumbnail" => $project['dto']->image ? $service->generateImageUrl($project['dto']->image) : null,
+                "image" => $project['dto']->image ? $service->generateImageUrl($project['dto']->image, false) : $service->generateDefaultImageUrl(),
+                "thumbnail" => $project['dto']->image ? $service->generateImageUrl($project['dto']->image) : $service->generateDefaultImageUrl(),
                 "title" => UTIL_String::truncate(strip_tags($project['dto']->name), 100, '...'),
                 "description" => UTIL_String::truncate(strip_tags($project['dto']->description), 150, '...'),
                 "url" => array("routeName" => "ocsfundraising.project", "vars" => array('id' => $project['dto']->id)),

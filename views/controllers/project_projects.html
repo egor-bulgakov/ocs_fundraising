@@ -56,13 +56,13 @@
         {$paging}
 
         {else}
-            <div class="ow_nocontent"></div>
+            <div class="ow_nocontent">{text key='ocsfundraising+no_projects'}</div>
         {/if}
     </div>
     <div class="ow_right ow_supernarrow">
         {$categories}
 
-        {if $canAdd}
+        {if $showAddButton}
             <div class="ow_center">{decorator name='button' langLabel='ocsfundraising+btn_add_project' id='btn-add-project' class='ow_ic_add'}</div>
         {/if}
     </div>

@@ -56,6 +56,12 @@ class OCSFUNDRAISING_BOL_DonationDao extends OW_BaseDao
         return 'OCSFUNDRAISING_BOL_Donation';
     }
 
+    /**
+     * @param $goalId
+     * @param $page
+     * @param $limit
+     * @return array|mixed
+     */
     public function getGoalDonations( $goalId, $page, $limit )
     {
         $first = ( $page - 1 ) * $limit;
@@ -67,7 +73,12 @@ class OCSFUNDRAISING_BOL_DonationDao extends OW_BaseDao
         
         return $this->findListByExample($example);
     }
-    
+
+    /**
+     * @param $goalId
+     * @param $limit
+     * @return array|mixed
+     */
     public function getGoalTopDonations( $goalId, $limit )
     {
     	$example = new OW_Example();
@@ -77,7 +88,12 @@ class OCSFUNDRAISING_BOL_DonationDao extends OW_BaseDao
         
         return $this->findListByExample($example);
     }
-    
+
+    /**
+     * @param $goalId
+     * @param $limit
+     * @return array|mixed
+     */
     public function getGoalLatestDonations( $goalId, $limit )
     {
         $example = new OW_Example();
@@ -87,7 +103,11 @@ class OCSFUNDRAISING_BOL_DonationDao extends OW_BaseDao
         
         return $this->findListByExample($example);
     }
-    
+
+    /**
+     * @param $goalId
+     * @return int
+     */
     public function countGoalDonations( $goalId )
     {
     	$example = new OW_Example();
@@ -95,7 +115,11 @@ class OCSFUNDRAISING_BOL_DonationDao extends OW_BaseDao
         
         return $this->countByExample($example);
     }
-    
+
+    /**
+     * @param $goalId
+     * @return int
+     */
     public function countGoalDonators( $goalId )
     {
         $sql = "SELECT COUNT(DISTINCT(`userId`)) FROM `".$this->getTableName()."`
@@ -103,7 +127,11 @@ class OCSFUNDRAISING_BOL_DonationDao extends OW_BaseDao
         
         return $this->dbo->queryForColumn($sql, array('id' => $goalId));
     }
-    
+
+    /**
+     * @param $goalId
+     * @return float
+     */
     public function getGoalDonationsSum( $goalId )
     {
     	$sql = "SELECT SUM(`amount`) FROM `".$this->getTableName()."`
@@ -111,7 +139,10 @@ class OCSFUNDRAISING_BOL_DonationDao extends OW_BaseDao
     	
     	return $this->dbo->queryForColumn($sql, array('id' => $goalId));
     }
-    
+
+    /**
+     * @param $goalId
+     */
     public function deleteByGoalId( $goalId )
     {
     	$sql = "DELETE FROM `".$this->getTableName()."`

@@ -1,5 +1,20 @@
 <?php
 
+/**
+ * Copyright (c) 2012, Oxwall CandyStore
+ * All rights reserved.
+
+ * This software is intended for use with Oxwall Free Community Software http://www.oxwall.org/ and is
+ * licensed under The BSD license.
+ */
+
+/**
+ * Goal add form class
+ *
+ * @author Oxwall CandyStore <plugins@oxcandystore.com>
+ * @package ow.ow_plugins.ocs_fundraising.classes
+ * @since 1.7.0
+ */
 class OCSFUNDRAISING_CLASS_GoalAddForm extends Form
 {
     public function __construct()

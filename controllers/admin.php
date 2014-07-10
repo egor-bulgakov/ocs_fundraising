@@ -229,7 +229,6 @@ $("#btn-delete-selected").click(function(){
     public function settings()
     {
         $lang = OW::getLanguage();
-        $service = OCSFUNDRAISING_BOL_Service::getInstance();
         $config = OW::getConfig();
 
         $form = new OCSFUNDRAISING_CLASS_SettingsForm();

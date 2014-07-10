@@ -1,12 +1,14 @@
 {foreach from=$projects item='item'}
-{capture assign='infoString'}
-<a href="{$item.url}">{$item.dto->name}</a>
-{/capture}
-{capture assign='content'}
-<div class="project_author ow_small">
-    {if $item.dto->categoryId}{text key='ocsfundraising+in'} <a href="{$item.categoryUrl}">{text key="ocsfundraising+category_`$item.dto->categoryId`"}</a>{/if}
-    <div class="project_desc ow_small">{$item.dto->description}</div>
-</div>
-{/capture}
-{decorator name='ipc' infoString=$infoString content=$content imageSrc=$item.imageSrc imageTitle=$item.dto->name}
+    {capture assign='infoString'}
+    <a href="{$item.url}">{$item.dto->name}</a>
+    {/capture}
+    {capture assign='content'}
+    <div class="project_author ow_small">
+        {if $item.dto->categoryId}{text key='ocsfundraising+in'} <a href="{$item.categoryUrl}">{text key="ocsfundraising+category_`$item.dto->categoryId`"}</a>{/if}
+        <div class="project_desc ow_small">{$item.dto->description}</div>
+    </div>
+    {/capture}
+    {decorator name='ipc' infoString=$infoString content=$content imageSrc=$item.imageSrc imageTitle=$item.dto->name}
+{foreachelse}
+    <div class="ow_nocontent">{text key='ocsfundraising+no_projects'}</div>
 {/foreach}

@@ -62,6 +62,9 @@ final class OCSFUNDRAISING_BOL_Service
         return self::$classInstance;
     }
 
+    /**
+     * @return array
+     */
     public function getCategoryList()
     {
         $list = $this->categoryDao->getCategories();
@@ -188,6 +191,7 @@ final class OCSFUNDRAISING_BOL_Service
 
     /**
      * @param OCSFUNDRAISING_BOL_Goal $goal
+     * @return int
      */
     public function addGoal( OCSFUNDRAISING_BOL_Goal $goal )
     {
@@ -233,6 +237,7 @@ final class OCSFUNDRAISING_BOL_Service
      */
     public function getGoalById( $id )
     {
+        /** @var OCSFUNDRAISING_BOL_Goal $dto */
     	$dto = $this->goalDao->findById($id);
     	if ( !$dto )
     	{
@@ -343,6 +348,12 @@ final class OCSFUNDRAISING_BOL_Service
         return $this->prepareListData($list);
     }
 
+    /**
+     * @param $userId
+     * @param $page
+     * @param $limit
+     * @return array
+     */
     public function getUserGoalList( $userId, $page, $limit )
     {
         $list = $this->goalDao->findUserGoals($userId, $page, $limit);
@@ -350,6 +361,11 @@ final class OCSFUNDRAISING_BOL_Service
         return $this->prepareListData($list);
     }
 
+    /**
+     * @param $page
+     * @param $limit
+     * @return array
+     */
     public function getPopularGoalList( $page, $limit )
     {
         $list = $this->goalDao->findPopularGoals($page, $limit);
@@ -367,11 +383,18 @@ final class OCSFUNDRAISING_BOL_Service
         return $this->goalDao->countGoalsWithStatus($status, $categoryId);
     }
 
+    /**
+     * @param $userId
+     * @return int
+     */
     public function getUserGoalsCount( $userId )
     {
         return $this->goalDao->countUserGoals($userId);
     }
 
+    /**
+     * @return int
+     */
     public function getPopularGoalsCount()
     {
         return $this->goalDao->countPopularGoals();
@@ -391,10 +414,11 @@ final class OCSFUNDRAISING_BOL_Service
     }
 
     /**
-     * @param $goalId
-     * @param $type
+     * @param int $goalId
+     * @param string $type
      * @param int $page
      * @param int $limit
+     * @param bool $adminMode
      * @return array|bool
      */
     public function getDonationList( $goalId, $type, $page = 1, $limit = 3, $adminMode = false )
@@ -416,7 +440,7 @@ final class OCSFUNDRAISING_BOL_Service
     			break;
     	}
     	
-        if ( !$list ) { return false; }
+        if ( empty($list) ) { return false; }
         
         $avatarService = BOL_AvatarService::getInstance();
         $userService = BOL_UserService::getInstance();
@@ -465,9 +489,16 @@ final class OCSFUNDRAISING_BOL_Service
     	$this->goalDao->checkComplete();
     }
 
+    /**
+     * @param $goalId
+     * @param $imagePath
+     * @param $imageId
+     */
     public function saveImage( $goalId, $imagePath, $imageId )
     {
         $storage = OW::getStorage();
+
+        /** @var OCSFUNDRAISING_BOL_Goal $goal */
         $goal = $this->goalDao->findById($goalId);
 
         if ( !$imageId )
@@ -537,5 +568,4 @@ final class OCSFUNDRAISING_BOL_Service
     {
         return OW::getPluginManager()->getPlugin('ocsfundraising')->getStaticUrl() . 'img/no-picture.png';
     }
-
 }

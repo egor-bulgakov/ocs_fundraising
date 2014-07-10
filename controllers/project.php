@@ -26,8 +26,8 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
 
         if ( !OW::getUser()->isAuthorized('ocsfundraising', 'add_goal') )
         {
-            $this->setTemplate(OW::getPluginManager()->getPlugin('base')->getCtrlViewDir() . 'authorization_failed.html');
-            return;
+            $status = BOL_AuthorizationService::getInstance()->getActionStatus('ocsfundraising', 'add_goal');
+            throw new AuthorizationException($status['msg']);
         }
 
         $service = OCSFUNDRAISING_BOL_Service::getInstance();
@@ -125,12 +125,32 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
         $this->addComponent('categories', new OCSFUNDRAISING_CMP_Categories());
         $this->addComponent('menu', $this->getMenu());
 
-        $this->assign('canAdd', OW::getUser()->isAuthorized('ocsfundraising', 'add_goal'));
+        // check auth
+        $showAddButton = true;
+        $status = BOL_AuthorizationService::getInstance()->getActionStatus('ocsfundraising', 'add_goal');
 
-        $script = '$("#btn-add-project").click(function(){
-            document.location.href = '.json_encode(OW::getRouter()->urlForRoute('ocsfundraising.add_goal')).';
-        });';
-        OW::getDocument()->addOnloadScript($script);
+        if ( $status['status'] == BOL_AuthorizationService::STATUS_AVAILABLE )
+        {
+            $script = '$("#btn-add-project").click(function(){
+                document.location.href = ' . json_encode(OW::getRouter()->urlForRoute('ocsfundraising.add_goal')) . ';
+            });';
+
+            OW::getDocument()->addOnloadScript($script);
+        }
+        else if ( $status['status'] == BOL_AuthorizationService::STATUS_PROMOTED )
+        {
+            $script = '$("#btn-add-project").click(function(){
+                OW.authorizationLimitedFloatbox('.json_encode($status['msg']).');
+            });';
+
+            OW::getDocument()->addOnloadScript($script);
+        }
+        else
+        {
+            $showAddButton = false;
+        }
+
+        $this->assign('showAddButton', $showAddButton);
 
         $this->setPageHeading($lang->text('ocsfundraising', 'crowdfunding_projects'));
     }
@@ -166,12 +186,32 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
         $this->addComponent('categories', new OCSFUNDRAISING_CMP_Categories());
         $this->addComponent('menu', $this->getMenu());
 
-        $this->assign('canAdd', OW::getUser()->isAuthorized('ocsfundraising', 'add_goal'));
+        // check auth
+        $showAddButton = true;
+        $status = BOL_AuthorizationService::getInstance()->getActionStatus('ocsfundraising', 'add_goal');
 
-        $script = '$("#btn-add-project").click(function(){
-            document.location.href = '.json_encode(OW::getRouter()->urlForRoute('ocsfundraising.add_goal')).';
-        });';
-        OW::getDocument()->addOnloadScript($script);
+        if ( $status['status'] == BOL_AuthorizationService::STATUS_AVAILABLE )
+        {
+            $script = '$("#btn-add-project").click(function(){
+                document.location.href = ' . json_encode(OW::getRouter()->urlForRoute('ocsfundraising.add_goal')) . ';
+            });';
+
+            OW::getDocument()->addOnloadScript($script);
+        }
+        else if ( $status['status'] == BOL_AuthorizationService::STATUS_PROMOTED )
+        {
+            $script = '$("#btn-add-project").click(function(){
+                OW.authorizationLimitedFloatbox('.json_encode($status['msg']).');
+            });';
+
+            OW::getDocument()->addOnloadScript($script);
+        }
+        else
+        {
+            $showAddButton = false;
+        }
+
+        $this->assign('showAddButton', $showAddButton);
 
         if ( OW::getUser()->getId() == $user->id )
         {
@@ -223,12 +263,32 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
         $this->addComponent('categories', new OCSFUNDRAISING_CMP_Categories());
         $this->addComponent('menu', $this->getMenu());
 
-        $this->assign('canAdd', OW::getUser()->isAuthorized('ocsfundraising', 'add_goal'));
+        // check auth
+        $showAddButton = true;
+        $status = BOL_AuthorizationService::getInstance()->getActionStatus('ocsfundraising', 'add_goal');
 
-        $script = '$("#btn-add-project").click(function(){
-            document.location.href = '.json_encode(OW::getRouter()->urlForRoute('ocsfundraising.add_goal')).';
-        });';
-        OW::getDocument()->addOnloadScript($script);
+        if ( $status['status'] == BOL_AuthorizationService::STATUS_AVAILABLE )
+        {
+            $script = '$("#btn-add-project").click(function(){
+                document.location.href = ' . json_encode(OW::getRouter()->urlForRoute('ocsfundraising.add_goal')) . ';
+            });';
+
+            OW::getDocument()->addOnloadScript($script);
+        }
+        else if ( $status['status'] == BOL_AuthorizationService::STATUS_PROMOTED )
+        {
+            $script = '$("#btn-add-project").click(function(){
+                OW.authorizationLimitedFloatbox('.json_encode($status['msg']).');
+            });';
+
+            OW::getDocument()->addOnloadScript($script);
+        }
+        else
+        {
+            $showAddButton = false;
+        }
+
+        $this->assign('showAddButton', $showAddButton);
 
         $heading = $lang->text('ocsfundraising', 'crowdfunding_projects')
             . ': ' . $lang->text('ocsfundraising', 'category_' . $categoryId);
@@ -258,12 +318,32 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
         $this->addComponent('categories', new OCSFUNDRAISING_CMP_Categories());
         $this->addComponent('menu', $this->getMenu());
 
-        $this->assign('canAdd', OW::getUser()->isAuthorized('ocsfundraising', 'add_goal'));
+        // check auth
+        $showAddButton = true;
+        $status = BOL_AuthorizationService::getInstance()->getActionStatus('ocsfundraising', 'add_goal');
 
-        $script = '$("#btn-add-project").click(function(){
-            document.location.href = '.json_encode(OW::getRouter()->urlForRoute('ocsfundraising.add_goal')).';
-        });';
-        OW::getDocument()->addOnloadScript($script);
+        if ( $status['status'] == BOL_AuthorizationService::STATUS_AVAILABLE )
+        {
+            $script = '$("#btn-add-project").click(function(){
+                document.location.href = ' . json_encode(OW::getRouter()->urlForRoute('ocsfundraising.add_goal')) . ';
+            });';
+
+            OW::getDocument()->addOnloadScript($script);
+        }
+        else if ( $status['status'] == BOL_AuthorizationService::STATUS_PROMOTED )
+        {
+            $script = '$("#btn-add-project").click(function(){
+                OW.authorizationLimitedFloatbox('.json_encode($status['msg']).');
+            });';
+
+            OW::getDocument()->addOnloadScript($script);
+        }
+        else
+        {
+            $showAddButton = false;
+        }
+
+        $this->assign('showAddButton', $showAddButton);
 
         $this->setPageHeading($lang->text('ocsfundraising', 'archived_projects'));
     }
@@ -290,12 +370,32 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
         $this->addComponent('categories', new OCSFUNDRAISING_CMP_Categories());
         $this->addComponent('menu', $this->getMenu());
 
-        $this->assign('canAdd', OW::getUser()->isAuthorized('ocsfundraising', 'add_goal'));
+        // check auth
+        $showAddButton = true;
+        $status = BOL_AuthorizationService::getInstance()->getActionStatus('ocsfundraising', 'add_goal');
 
-        $script = '$("#btn-add-project").click(function(){
-            document.location.href = '.json_encode(OW::getRouter()->urlForRoute('ocsfundraising.add_goal')).';
-        });';
-        OW::getDocument()->addOnloadScript($script);
+        if ( $status['status'] == BOL_AuthorizationService::STATUS_AVAILABLE )
+        {
+            $script = '$("#btn-add-project").click(function(){
+                document.location.href = ' . json_encode(OW::getRouter()->urlForRoute('ocsfundraising.add_goal')) . ';
+            });';
+
+            OW::getDocument()->addOnloadScript($script);
+        }
+        else if ( $status['status'] == BOL_AuthorizationService::STATUS_PROMOTED )
+        {
+            $script = '$("#btn-add-project").click(function(){
+                OW.authorizationLimitedFloatbox('.json_encode($status['msg']).');
+            });';
+
+            OW::getDocument()->addOnloadScript($script);
+        }
+        else
+        {
+            $showAddButton = false;
+        }
+
+        $this->assign('showAddButton', $showAddButton);
 
         $this->setPageHeading($lang->text('ocsfundraising', 'popular_projects'));
     }
@@ -310,7 +410,6 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
         $projectId = (int) $params['id'];
         $service = OCSFUNDRAISING_BOL_Service::getInstance();
 
-
         $project = $service->getGoalById($projectId);
 
         if ( !$project )
@@ -323,7 +422,6 @@ class OCSFUNDRAISING_CTRL_Project extends OW_ActionController
         $this->assign('imageSrc', $image);
 
         $lang = OW::getLanguage();
-
 
         $viewerId = OW::getUser()->getId();
         $isOwner = $viewerId && ($project['dto']->ownerId == $viewerId);
