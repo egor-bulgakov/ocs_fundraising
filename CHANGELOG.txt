@@ -1,3 +1,8 @@
+Nov 29, 2014 - Fundraising / Crowdfunding plugin build 11
+============
+* Goals list layout fixed
+* Oxwall 1.7.2 support
+
 Jul 15, 2014 - Fundraising / Crowdfunding plugin build 10
 ============
 * Bug fixed with donations not being registered

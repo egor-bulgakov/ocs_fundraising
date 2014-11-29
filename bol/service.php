@@ -319,7 +319,7 @@ final class OCSFUNDRAISING_BOL_Service
 
             foreach ( $list as $goal )
             {
-                $goal->description = mb_substr($goal->description, 0, 120);
+                $goal->description = mb_substr(strip_tags($goal->description), 0, 120);
                 $result[$goal->id]['dto'] = $goal;
                 $result[$goal->id]['imageSrc'] = $goal->image ? $this->generateImageUrl($goal->image, true) : $this->generateDefaultImageUrl();
                 $result[$goal->id]['url'] = $router->urlForRoute('ocsfundraising.project', array('id' => $goal->id));
